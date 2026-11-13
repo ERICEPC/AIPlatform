@@ -155,7 +155,7 @@ export default function MineTab({ go, tick: outerTick, onCreate }: { go: (path: 
                 {a.active_config_is_published ? <Badge tone="mint" dot>已发布</Badge> : <Badge>草稿</Badge>}
                 <div className="-mt-1 -mr-2"><Menu items={a.created_by === currentUser.id ? actions.items(a) : actions.items(a).filter(item => typeof item !== 'string' && ['复制', '导出 DSL'].includes(String(item.label)))} /></div>
               </div>
-              <ResourceVisibility kind="agent" id={a.id} />
+              <ResourceVisibility kind="agent" id={a.id} name={a.name} published={!!a.active_config_is_published} />
               <p className="rx-agent-description mt-4 text-[13.5px] leading-relaxed text-ink-2" title={a.description || '添加一句话简介，方便同事和助手知道什么时候用它。'}>
                 {a.description || <span className="text-ink-3">添加一句话简介，方便同事和助手知道什么时候用它。</span>}
               </p>

@@ -1,4 +1,9 @@
 import { login, setupStatus, initStatus, validateInit, setupAdmin } from '@/api/auth'
+import { API_MODE } from '@/api/http'
+import { partnerAuthStatus } from '@/api/governance'
+import { demoAccounts, recordLogin, signIn } from '@/api/mock/governance'
+import { asset } from '@/lib/asset'
+import { cn } from '@/lib/cn'
 import { useEffect } from 'react'
 import { RiArrowRightLine, RiLockLine, RiMailLine } from '@remixicon/react'
 import { motion } from 'motion/react'
@@ -43,7 +48,20 @@ export default function Login({ theme, onEnter }: { theme: 'dark' | 'light', onE
   const [stage, setStage] = useState('loading')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  useEffect(() => { setupStatus().then(async s => { setStage(s.step === 'finished' ? 'login' : (await initStatus()).status === 'finished' ? 'setup' : 'init') }).catch(e => {setError(e.message); setStage('error')}) }, [])
+  const [mode, setMode] = useState<'password' | 'sso'>(API_MODE === 'mock' ? 'password' : 'sso')
+  const [ssoError, setSsoError] = useState(() => new URLSearchParams(location.hash.split('?')[1] ?? '').get('sso_error') ?? '')
+  /* 企业统一身份：服务端（BFF）发起 OIDC 授权码 + PKCE，回调后写入控制台会话再跳回来 */
+  const sso = async () => {
+    setBusy(true); setSsoError('')
+    try {
+      if (API_MODE === 'mock') throw new Error('演示模式未接入统一身份，请使用下方演示账号')
+      const s = await partnerAuthStatus()
+      if (!s.configured) throw new Error('统一身份未配置，请联系管理员配置 PARTNER_AUTH_* 后重试；开发环境可用账号密码登录')
+      location.href = `${import.meta.env.VITE_API_BASE ?? '/console/api'}/auth/partner/login?redirect_url=${encodeURIComponent(`${location.pathname}#assistant`)}`
+    } catch (e) { setSsoError((e as Error).message); setBusy(false) }
+  }
+  const enterDemo = (id: string) => { signIn(id); recordLogin(); onEnter() }
+  useEffect(() => { if (API_MODE === 'mock') { setStage('login'); return } setupStatus().then(async s => { setStage(s.step === 'finished' ? 'login' : (await initStatus()).status === 'finished' ? 'setup' : 'init') }).catch(e => {setError(e.message); setStage('error')}) }, [])
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); setBusy(true); setError('')
     const f = new FormData(e.currentTarget)
@@ -97,7 +115,15 @@ export default function Login({ theme, onEnter }: { theme: 'dark' | 'light', onE
             <h2 className="text-[26px] font-semibold">{stage === 'init' ? '初始化工作台' : stage === 'setup' ? '创建管理员' : '登录'}</h2>
             <p className="mt-2 text-[14px] text-ink-2">{stage === 'init' ? '输入部署时生成的初始化口令。' : stage === 'setup' ? '创建你的企业管理员账号。' : '欢迎回来，连接你的真实工作空间。'}</p>
             {error && <p role="alert" className="mt-4 rounded-xl bg-rose-soft p-3 text-rose">{error}</p>}
-            {stage === 'loading' ? <p className="py-8">正在连接服务…</p> : stage === 'error' ? <Button onClick={() => location.reload()}>重新连接</Button> : <form key={stage} className="mt-8 space-y-4" onSubmit={submit}>
+            {stage === 'login' && <div role="tablist" aria-label="登录方式" className="mt-6 grid grid-cols-2 gap-1 rounded-xl bg-hover p-1 text-[13.5px]">{([['sso', '企业统一身份'], ['password', API_MODE === 'mock' ? '演示账号' : '账号密码']] as const).map(([k, l]) => <button key={k} type="button" role="tab" aria-selected={mode === k} onClick={() => setMode(k)} className={cn('h-9 cursor-pointer rounded-lg transition-colors', mode === k ? 'bg-solid font-semibold text-ink shadow-sm' : 'text-ink-3 hover:text-ink')}>{l}</button>)}</div>}
+            {stage === 'login' && mode === 'sso' ? <div className="mt-6 space-y-4">
+              <p className="text-[13px] leading-6 text-ink-2">使用公司统一身份（Auth）登录。已有平台账号的同事：请先用账号密码登录，在左下角账号菜单中「绑定企业统一身份」，之后即可直接用统一身份登录。新同事首次登录会自动建立账号，部门由超级管理员分配。</p>
+              {ssoError && <p role="alert" className="rounded-xl bg-rose-soft p-3 text-[13px] text-rose">{ssoError}</p>}
+              <Button variant="primary" size="large" loading={busy} className="w-full" onClick={sso}>使用统一身份登录<RiArrowRightLine className="size-4" /></Button>
+            </div> : stage === 'login' && API_MODE === 'mock' ? <div className="mt-6 space-y-2">
+              <p className="text-[12.5px] text-ink-3">演示模式：选择一个账号进入，数据在本次浏览中共享，可随时在左下角切换账号。</p>
+              {demoAccounts.map(a => <button key={a.id} type="button" onClick={() => enterDemo(a.id)} className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-line bg-hover p-3 text-left transition-colors hover:border-volt"><img src={asset(a.avatar)} alt="" className="size-9 rounded-full" /><span className="min-w-0 flex-1"><span className="block text-[14px] font-semibold">{a.name}<span className="ml-2 text-[12px] font-normal text-ink-3">{a.title}</span></span><span className="block truncate text-[12px] text-ink-3">{a.hint}</span></span><RiArrowRightLine className="size-4 text-ink-3" /></button>)}
+            </div> : stage === 'loading' ? <p className="py-8">正在连接服务…</p> : stage === 'error' ? <Button onClick={() => location.reload()}>重新连接</Button> : <form key={stage} className="mt-8 space-y-4" onSubmit={submit}>
               {stage !== 'init' && <Field name="email" icon={RiMailLine} label="邮箱" type="email" placeholder="name@company.com" />}
               {stage === 'setup' && <Field name="name" icon={RiMailLine} label="姓名" placeholder="你的姓名" />}
               <Field name="password" icon={RiLockLine} label={stage === 'init' ? '初始化口令' : '密码'} type="password" placeholder={stage === 'setup' ? '至少 8 位，包含字母和数字' : '输入密码或口令'} />

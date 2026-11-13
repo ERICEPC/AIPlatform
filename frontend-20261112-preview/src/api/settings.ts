@@ -5,6 +5,7 @@
 */
 import { request } from './http'
 import * as db from './mock/settings'
+import { signOut } from './mock/governance'
 
 /* ---------------- 类型 ---------------- */
 export type InterfaceLanguage = 'zh-Hans' | 'en-US'
@@ -73,4 +74,4 @@ export const updateTimezone = (timezone: string) =>
 
 /** POST /logout 退出登录（清除会话 Cookie） */
 export const logout = () =>
-  request<CommonResult>({ method: 'POST', path: '/logout' }, () => db.ok())
+  request<CommonResult>({ method: 'POST', path: '/logout' }, () => { signOut(); return db.ok() })

@@ -128,28 +128,26 @@ def serialize(row, kind, uid, session, tenant):
     departments=list(session.execute(text('SELECT department_id FROM rx_resource_departments WHERE tenant_id=:t AND kind=:k AND resource_id=:r'), {'t':tenant,'k':kind,'r':row.id}).scalars())
     return {'id':row.id,'department_ids':departments,'visibility':'public' if is_public(session,tenant,kind,row.id) else 'department' if departments else 'private','can_manage':getattr(row,MODELS[kind][1])==uid,'owner_id':getattr(row,MODELS[kind][1])}
 
+def can_view(session, tenant, user_id, kind, owner_id, rid):
+    return owner_id == user_id or rid in accessible_ids(session, tenant, user_id, kind)
+
 @console_ns.route('/resource-visibility/<string:kind>/<string:resource_id>')
 class ResourceVisibility(Resource):
+    """ResourceShare view for agent/team/skill/mcp. Widening goes through /resource-shares."""
     @auth
     def get(self,session,tenant_id,current_user,kind,resource_id):
-        if kind not in MODELS:raise BadRequest('无效资源类型')
-        row=raw_resource(session,tenant_id,kind,resource_id)
-        if not can_read(session,tenant_id,current_user.id,kind,row):raise NotFound('资源不存在或仅创建者可见')
-        return serialize(row,kind,current_user.id,session,tenant_id)
+        from .governance import resource_info, share_view
+        from services.platform_governance.policy import KINDS
+        if kind not in KINDS:raise BadRequest('无效资源类型')
+        try:info=resource_info(session,tenant_id,kind,resource_id)
+        except (NotFound, BadRequest):raise NotFound('资源不存在或仅创建者可见') from None
+        if not can_view(session,tenant_id,current_user.id,kind,info['owner_id'],info['id']):raise NotFound('资源不存在或仅创建者可见')
+        return share_view(session,tenant_id,current_user.id,kind,info)
     @auth
     def put(self,session,tenant_id,current_user,kind,resource_id):
-        if kind not in MODELS:raise BadRequest('无效资源类型')
-        session.execute(text('SELECT tenant_id FROM rx_governance_settings WHERE tenant_id=:t FOR UPDATE'),{'t':tenant_id})
-        row=raw_resource(session,tenant_id,kind,resource_id)
-        if not row or getattr(row,MODELS[kind][1])!=current_user.id:raise Forbidden('仅创建者可以设置可见性')
+        from .governance import make_private
+        from services.platform_governance.policy import KINDS
+        if kind not in KINDS:raise BadRequest('无效资源类型')
         value=(request.get_json(silent=True) or {}).get('visibility')
-        if value not in ('private','public'):raise BadRequest('请选择 private 或 public')
-        from .governance import enabled, apply_visibility, audit
-        if enabled(session,tenant_id) and value!='private':
-            raise Forbidden('扩大共享范围需要提交发布审批')
-        # An owner can immediately revoke sharing without waiting for approval.
-        apply_visibility(session,tenant_id,current_user.id,kind,row.id,'workspace' if value=='public' else 'private',[])
-        session.execute(text("UPDATE rx_releases SET state='withdrawn',comment='创建者收回共享，待审批申请自动撤回',decided_at=now() WHERE tenant_id=:t AND kind=:k AND resource_id=:r AND state='pending'"),dict(t=tenant_id,k=kind,r=row.id))
-        audit(session,tenant_id,current_user.id,'resource.visibility',row.id,detail={'visibility':value})
-        if kind=='skill':row.visibility=value
-        return serialize(row,kind,current_user.id,session,tenant_id)
+        if value!='private':raise BadRequest('扩大共享范围请提交共享申请，审批通过后生效')
+        return make_private(session,tenant_id,current_user.id,kind,resource_id)

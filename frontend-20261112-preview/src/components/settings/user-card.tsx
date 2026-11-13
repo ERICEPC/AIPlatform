@@ -8,13 +8,26 @@ import { currentUser as me } from '@/lib/current-user'
 import { useTheme } from '@/lib/theme'
 import { languageLabel, readLanguage, useOpenSettingsListener } from './events'
 import { useLogout } from './kit'
+import { API_MODE } from '@/api/http'
+import { currentDemo, demoAccounts, recordLogin, signIn } from '@/api/mock/governance'
+import { RiUserSharedLine, RiShieldUserLine } from '@remixicon/react'
+import { useQuery } from '@/api/hooks'
+import { bindPartnerAuth, partnerAuthStatus } from '@/api/governance'
 import { SettingsDialog } from './settings-dialog'
+
+/** 演示模式切换账号：数据保存在 sessionStorage，刷新后保持 */
+function switchDemo(id: string) {
+  signIn(id); recordLogin()
+  if (id === 'member' && location.hash.startsWith('#admin')) location.hash = 'releases'
+  location.reload()
+}
 
 export function UserCard({ go }: { go: (path: string) => void }) {
   const { theme, toggle } = useTheme()
   const [open, setOpen] = useState(false)
   const [tab, setTab] = useState<SettingsTab>('general')
   const out = useLogout(go)
+  const sso = useQuery(partnerAuthStatus, [], { enabled: API_MODE === 'live' })
 
   const show = useCallback((t: SettingsTab) => {
     setTab(t)
@@ -47,6 +60,8 @@ export function UserCard({ go }: { go: (path: string) => void }) {
           { label: theme === 'dark' ? '切换到浅色' : '切换到深色', icon: theme === 'dark' ? RiSunLine : RiMoonClearLine, onSelect: toggle },
           { label: '语言', icon: RiTranslate2, hint: languageLabel[readLanguage()], onSelect: () => show('general') },
           'separator',
+          ...(API_MODE === 'live' && sso.data?.configured ? [sso.data.bound ? { label: '已绑定企业统一身份', icon: RiShieldUserLine, disabled: true, onSelect: () => {} } : { label: '绑定企业统一身份', icon: RiShieldUserLine, hint: '首次使用', onSelect: bindPartnerAuth }, 'separator' as const] : []),
+          ...(API_MODE === 'mock' ? [...demoAccounts.filter(a => a.id !== currentDemo()?.id).map(a => ({ label: `切换为 ${a.name}`, icon: RiUserSharedLine, hint: a.title.split(' · ')[1], onSelect: () => switchDemo(a.id) })), 'separator' as const] : []),
           { label: out.pending ? '正在登出…' : '登出', icon: RiLogoutBoxRLine, danger: true, disabled: out.pending, onSelect: out.run },
         ]}
       />

@@ -60,8 +60,8 @@ export function PublishBar({ ctx, save, onRetrySave }: { ctx: AgentCtx, save: Sa
     setChecks(list)
     setNote('')
     try {
-      const visibility=await governance<{visibility:'private'|'public'|'department';department_ids:string[]}>(`/resource-visibility/agent/${agentId}`)
-      setReleaseOptions({...emptyRelease,visibility:visibility.visibility==='public'?'workspace':visibility.visibility,department_ids:visibility.department_ids||[],external_access:ctx.agent.enable_site||ctx.agent.enable_api})
+      const visibility=await governance<{visibility:'private'|'public'|'department';department_id:string|null}>(`/resource-visibility/agent/${agentId}`)
+      setReleaseOptions({...emptyRelease,visibility:visibility.visibility==='public'?'workspace':visibility.visibility,department_ids:visibility.department_id?[visibility.department_id]:[],external_access:ctx.agent.enable_site||ctx.agent.enable_api})
     } catch(e){toast(errText(e),'info');return}
     setRefs(null)
     setDialog(true)

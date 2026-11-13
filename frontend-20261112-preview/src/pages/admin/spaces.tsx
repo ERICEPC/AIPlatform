@@ -1,73 +1,54 @@
-import type { FieldValue } from '@/components/console'
-import { RiBriefcase4Line, RiSave3Line } from '@remixicon/react'
-import { useEffect, useState } from 'react'
+/* 业务空间：按部门看智能体用量。智能体属于其所有者所在部门；部门负责人只看自己负责的部门。 */
+import { useState } from 'react'
 import { useQuery } from '@/api/hooks'
-import { listSpaces, saveSpace } from '@/api/admin'
-import { ConsolePage, KV, PageHeader, SchemaForm, Section } from '@/components/console'
-import { Button } from '@/components/ui/button'
+import { fmtTime, getUsage } from '@/api/governance'
+import { ModuleTitle } from '@/components/page-mark'
+import { SHARED_TEXT } from '@/components/resource-visibility'
 import { ErrorBar } from '@/components/ui/data'
-import { Badge, EmptyState, Progress } from '@/components/ui/primitives'
-import { useToast } from '@/components/ui/toast'
+import { Segmented } from '@/components/ui/segmented'
+import { useSession } from '@/lib/session'
 import { cn } from '@/lib/cn'
+import { card } from './org'
 
-/*
-  业务空间：按部门或业务划分。普通管理员为自己管理的业务配置资源，开放给更多人使用：
-  分配数据库 schema 与配额、向量集合与存储目录、知识库空间、模型额度、可调用的 xBuddy、默认可见范围。
-  组件本身的连接（例如 PostgreSQL 地址）由超级管理员在「AI 技术栈组件」里配置。
-*/
-export function SpacesPage({ id, go }: { id?: string, go: (p: string) => void }) {
-  const toast = useToast()
-  const q = useQuery(listSpaces, [])
-  const list = q.data?.data ?? []
-  const cur = list.find(s => s.id === id) ?? list[0]
-  const [values, setValues] = useState<Record<string, FieldValue>>({})
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState('')
-  const dirty = !!cur && JSON.stringify(values) !== JSON.stringify(cur.values)
-  const save = async () => {
-    if (!cur || busy) return
-    const missing = cur.fields.find(f => f.required && (values[f.key] === '' || values[f.key] == null))
-    if (missing) { setError(`请填写${missing.label}`); return }
-    if (Object.values(values).some(v => typeof v === 'number' && (!Number.isFinite(v) || v < 0))) { setError('配额与数值不能小于 0'); return }
-    setBusy(true); setError('')
-    try { await saveSpace(cur.id, values); await q.reload(); toast('业务空间已保存') }
-    catch(e) { setError((e as Error).message) } finally { setBusy(false) }
-  }
-  useEffect(() => { if (cur) setValues(cur.values) }, [cur?.id, cur]) // eslint-disable-line react-hooks/exhaustive-deps
-  return (
-    <ConsolePage header={<PageHeader title="业务空间" desc="为一个部门或业务分配平台资源；空间内的成员、智能体、智能体团队与 xBuddy 只使用本空间的数据与额度。" />}>
-      <div className="grid w-full grid-cols-[280px_1fr] gap-5 max-xl:grid-cols-1">
-        <Section title="我管理的空间" bodyClass="p-2">
-          {q.error && <ErrorBar error={q.error} onRetry={q.reload} />}
-          {!list.length && !q.loading && <EmptyState icon={<RiBriefcase4Line className="size-5" />} title="没有可管理的业务空间" hint="由超级管理员创建并授权。" />}
-          {list.map(s => (
-            <button key={s.id} type="button" onClick={() => { if (!dirty || window.confirm("有未保存的配置，是否放弃并切换空间？")) { setError(''); go(`admin/spaces/${s.id}`) } }} className={cn('block w-full cursor-pointer rounded-md px-3 py-2.5 text-left', s.id === cur?.id ? 'bg-volt-soft' : 'hover:bg-hover')}>
-              <span className="block text-[13.5px] font-medium">{s.name}</span>
-              <span className="mt-0.5 block text-[12px] text-ink-3">{s.members} 位成员 · {s.agents} 个智能体 · {s.apps.join('、')}</span>
-            </button>
-          ))}
-        </Section>
-        {cur && (
-          <div className="space-y-5">
-            <Section title={cur.name} desc={cur.desc}>
-              <KV cols={4} items={[['管理员', cur.admins.join('、')], ['成员', cur.members], ['智能体 / 智能体团队', `${cur.agents} / ${cur.workflows}`], ['xBuddy', cur.apps.join('、')]]} />
-              <div className="mt-5 grid grid-cols-2 gap-3 max-lg:grid-cols-1">
-                {cur.resources.map(r => (
-                  <div key={r.name} className="rounded-lg border border-line p-3">
-                    <p className="flex items-center justify-between text-[13px] font-medium">{r.name}<Badge>{{ database: '数据库', vector: '向量', object: '存储', kb: '知识库', model: '模型', app: '应用' }[r.kind]}</Badge></p>
-                    <p className="mt-0.5 text-[12px] text-ink-3">{r.detail}{r.quota ? ` · ${r.usage} / ${r.quota} ${r.unit}` : ''}</p>
-                    {r.quota && <div className="mt-2"><Progress value={((r.usage ?? 0) / r.quota) * 100} /></div>}
-                  </div>
-                ))}
-              </div>
-            </Section>
-            <Section title="为业务配置" desc="保存后对空间内成员生效；发布审批固定开启。" actions={<><Button disabled={!dirty||busy} onClick={() => {setValues({...cur.values});setError('')}}>重置</Button><Button variant="primary" disabled={!dirty||busy} onClick={save}><RiSave3Line className="size-4" />{busy ? '保存中…' : '保存配置'}</Button></>}>
-              {error && <p role="alert" className="mb-4 text-sm text-rose">{error}</p>}
-              <SchemaForm fields={cur.fields} value={values} onChange={(k, v) => setValues(x => ({ ...x, [k]: v }))} />
-            </Section>
-          </div>
-        )}
-      </div>
-    </ConsolePage>
-  )
+const num = (n: number) => n >= 1e8 ? `${(n / 1e8).toFixed(2)} 亿` : n >= 1e4 ? `${(n / 1e4).toFixed(1)} 万` : n.toLocaleString('zh-CN')
+
+export default function Spaces() {
+  const { perms } = useSession()
+  const superuser = perms?.role === 'super_admin'
+  const [days, setDays] = useState<'7' | '30'>('7')
+  const [dept, setDept] = useState(superuser ? '' : perms?.head_department_ids[0] ?? '')
+  const q = useQuery(() => getUsage(Number(days) as 7 | 30, dept), [days, dept])
+  const u = q.data
+  const list = [...(superuser ? [{ id: '', name: '全部' }] : []), ...(u?.departments ?? [])]
+  const current = list.find(d => d.id === dept)?.name ?? '全部'
+  return <main className="flex min-h-0 flex-1 flex-col p-6">
+    <header className="flex items-start justify-between gap-4"><div><ModuleTitle>业务空间</ModuleTitle><p className="mt-2 text-sm text-ink-3">按部门查看智能体用量。智能体归属其所有者所在部门。</p></div>
+      <Segmented<'7' | '30'> value={days} onValueChange={setDays} aria-label="时间范围" options={[{ value: '7', label: '近 7 天' }, { value: '30', label: '近 30 天' }]} /></header>
+    <div className="mt-4 grid min-h-0 flex-1 grid-cols-[220px_1fr] gap-4">
+      <nav className={cn(card, 'min-h-0 overflow-auto p-1.5')} aria-label="部门">{list.map(d => <button key={d.id || 'all'} type="button" onClick={() => setDept(d.id)} className={cn('flex h-9 w-full cursor-pointer items-center rounded-md px-3 text-left text-[13px]', dept === d.id ? 'bg-volt-soft font-semibold text-volt-text' : 'hover:bg-hover')}>{d.name}</button>)}</nav>
+      <section className="flex min-h-0 flex-col gap-3">
+        <ErrorBar error={q.error} onRetry={q.reload} />
+        <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">{([['智能体数', u?.summary.agents], ['调用次数', u?.summary.calls], ['调用人数', u?.summary.callers], ['模型 Token 总量', u?.summary.tokens]] as const).map(([k, v]) =>
+          <div key={k} className={cn(card, 'px-4 py-3')}><p className="text-[12.5px] text-ink-3">{current} · {k}</p><p className="mt-1 text-2xl font-semibold tabular-nums">{v === undefined ? '—' : num(v)}</p></div>)}</div>
+        <div className={cn(card, 'min-h-0 flex-1 overflow-auto')}>
+          <table className="w-full text-left text-[13px]">
+            <thead className="sticky top-0 bg-hover text-[12px] text-ink-3"><tr>{['智能体', '所有者', '可见范围', '调用次数', '调用人数', '模型 Token', 'Token 合计', '最近调用'].map(h => <th key={h} className="px-3 py-2.5 font-medium">{h}</th>)}</tr></thead>
+            <tbody className="divide-y divide-line">
+              {u && !u.agents.length && <tr><td colSpan={8} className="px-4 py-10 text-center text-ink-3">该时间范围内没有调用</td></tr>}
+              {u?.agents.map(a => <tr key={a.id}>
+                <td className="px-3 py-2.5 font-medium">{a.name}</td>
+                <td className="px-3 py-2.5">{a.owner_name}<p className="text-[11.5px] text-ink-3">{a.department_name ?? '未分配部门'}</p></td>
+                <td className="px-3 py-2.5">{SHARED_TEXT[a.visibility]}</td>
+                <td className="px-3 py-2.5 tabular-nums">{a.calls.toLocaleString('zh-CN')}</td>
+                <td className="px-3 py-2.5 tabular-nums">{a.callers}</td>
+                <td className="px-3 py-2.5"><div className="space-y-0.5">{a.models.map(m => <p key={m.model} className="flex justify-between gap-3 text-[12px]"><span className="text-ink-2">{m.model}</span><span className="tabular-nums">{num(m.tokens)}</span></p>)}</div></td>
+                <td className="px-3 py-2.5 font-medium tabular-nums">{num(a.tokens)}</td>
+                <td className="px-3 py-2.5 text-ink-2 tabular-nums">{fmtTime(a.last_called_at)}</td>
+              </tr>)}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
 }

@@ -1,110 +1,142 @@
-import type { Member } from '@/api/admin'
-import { RiAddLine, RiBuilding2Line, RiRefreshLine } from '@remixicon/react'
-import { useState } from 'react'
+/*
+  组织与成员：账号来自统一身份 Auth，部门树、成员所属部门、部门负责人在平台内维护（超级管理员操作）。
+  部门负责人只读看本部门（含下级）子树。
+*/
+import { RiAddLine, RiDeleteBinLine, RiEditLine, RiOrganizationChart } from '@remixicon/react'
+import { useMemo, useState } from 'react'
 import { useQuery } from '@/api/hooks'
-import { createGroup, getDirectorySync, getOrg, listGroups, runDirectorySync } from '@/api/admin'
-import { ROLE_LABEL } from '@/api/access'
-import { ConsolePage, KV, PageHeader, Section, StatusTag } from '@/components/console'
+import { addHead, createDepartment, deleteDepartment, fmtTime, getIdentitySource, getOrg, listHeads, removeHead, ROLE_TEXT, setMemberDepartment, updateDepartment, type OrgDepartment, type OrgMember } from '@/api/governance'
+import { ModuleTitle } from '@/components/page-mark'
 import { Button } from '@/components/ui/button'
-import { Dialog } from '@/components/ui/dialog'
-import { Field, Select } from '@/components/ui/form'
-import { useToast } from '@/components/ui/toast'
 import { ErrorBar } from '@/components/ui/data'
-import { Input } from '@/components/ui/form'
+import { ConfirmDialog, Dialog } from '@/components/ui/dialog'
+import { Field, Input, Select } from '@/components/ui/form'
 import { Badge } from '@/components/ui/primitives'
+import { Segmented } from '@/components/ui/segmented'
+import { useToast } from '@/components/ui/toast'
 import { cn } from '@/lib/cn'
 
-/* 组织与成员（参考飞书管理后台）：成员与部门 · 用户组 · 通讯录同步；普通管理员只看管理范围内 */
-export function OrgPage() {
-  const [tab, setTab] = useState<'members' | 'groups' | 'sync'>('members')
-  return (
-    <ConsolePage header={<PageHeader title="组织与成员" desc="成员与部门从飞书或统一身份同步；用户组用于可用范围、审批人与审查人。业务用户在 xBuddy 里使用，开发者可登录 X 平台。" tabs={[{ id: 'members', label: '成员与部门' }, { id: 'groups', label: '用户组' }, { id: 'sync', label: '通讯录同步' }]} tab={tab} onTab={setTab} />}>
-      {tab === 'members' && <Members />}
-      {tab === 'groups' && <Groups />}
-      {tab === 'sync' && <Sync />}
-    </ConsolePage>
-  )
+type Tab = 'members' | 'heads' | 'identity'
+export const card = 'rounded-xl border border-line bg-solid'
+/** 部门树按层级展开成带缩进的列表 */
+export function flatten(depts: OrgDepartment[]) {
+  const ids = new Set(depts.map(d => d.id))
+  const out: (OrgDepartment & { depth: number })[] = []
+  const walk = (parent: string | null, depth: number) => depts.filter(d => (parent ? d.parent_id === parent : !d.parent_id || !ids.has(d.parent_id))).forEach((d) => { out.push({ ...d, depth }); walk(d.id, depth + 1) })
+  walk(null, 0)
+  return out
+}
+const roleTone = (r: OrgMember['role']) => r === 'super_admin' ? 'volt' : r === 'dept_head' ? 'mint' : 'neutral'
+
+function Members({ data, reload }: { data: { departments: OrgDepartment[], members: OrgMember[], readonly: boolean }, reload: () => void }) {
+  const toast = useToast()
+  const [sel, setSel] = useState<string>('all')
+  const [edit, setEdit] = useState<{ id?: string, name: string, parent_id: string }>()
+  const [moving, setMoving] = useState<OrgMember>()
+  const [target, setTarget] = useState('')
+  const [removing, setRemoving] = useState<OrgDepartment>()
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  const tree = useMemo(() => flatten(data.departments), [data.departments])
+  const name = (id: string | null) => data.departments.find(d => d.id === id)?.name ?? '未分配'
+  const sub = (id: string) => { const s = new Set([id]); let grew = true; while (grew) { grew = false; for (const d of data.departments) if (d.parent_id && s.has(d.parent_id) && !s.has(d.id)) { s.add(d.id); grew = true } } return s }
+  const members = sel === 'all' ? data.members : sel === 'none' ? data.members.filter(m => !m.department_id) : data.members.filter(m => m.department_id && sub(sel).has(m.department_id))
+  const run = async (fn: () => Promise<unknown>, ok: string) => { setBusy(true); setError(''); try { await fn(); toast(ok); reload(); return true } catch (e) { setError((e as Error).message); return false } finally { setBusy(false) } }
+  const opts = [{ value: '', label: '无（顶级部门）' }, ...tree.filter(d => !edit?.id || !sub(edit.id).has(d.id)).map(d => ({ value: d.id, label: `${'　'.repeat(d.depth)}${d.name}` }))]
+  return <div className="grid min-h-0 flex-1 grid-cols-[280px_1fr] gap-4">
+    <section className={cn(card, 'flex min-h-0 flex-col')}>
+      <div className="flex items-center justify-between border-b border-line px-3 py-2.5"><span className="text-[13px] font-semibold">部门</span>{!data.readonly && <Button size="small" onClick={() => setEdit({ name: '', parent_id: sel !== 'all' && sel !== 'none' ? sel : '' })}><RiAddLine className="size-4" />新建</Button>}</div>
+      <div className="min-h-0 flex-1 overflow-auto p-1.5">
+        {[{ id: 'all', name: data.readonly ? '我负责的全部部门' : '全部成员', depth: 0, member_count: data.members.length }, ...tree, ...(data.readonly ? [] : [{ id: 'none', name: '未分配部门', depth: 0, member_count: data.members.filter(m => !m.department_id).length }])].map(d =>
+          <div key={d.id} className={cn('group flex h-8 items-center gap-1 rounded-md pr-1 text-[13px]', sel === d.id ? 'bg-volt-soft text-volt-text' : 'hover:bg-hover')} style={{ paddingLeft: 8 + d.depth * 14 }}>
+            <button type="button" onClick={() => setSel(d.id)} className="flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 text-left"><RiOrganizationChart className="size-3.5 shrink-0 text-ink-3" /><span className="truncate">{d.name}</span><span className="text-[11.5px] text-ink-3">{d.member_count}</span></button>
+            {!data.readonly && 'parent_id' in d && <span className="hidden gap-0.5 group-hover:flex">
+              <button type="button" aria-label="编辑部门" className="cursor-pointer rounded p-1 text-ink-3 hover:text-ink" onClick={() => setEdit({ id: d.id, name: d.name, parent_id: (d as OrgDepartment).parent_id ?? '' })}><RiEditLine className="size-3.5" /></button>
+              <button type="button" aria-label="删除部门" className="cursor-pointer rounded p-1 text-ink-3 hover:text-rose" onClick={() => setRemoving(d as OrgDepartment)}><RiDeleteBinLine className="size-3.5" /></button>
+            </span>}
+          </div>)}
+      </div>
+      {data.readonly && <p className="border-t border-line px-3 py-2 text-[11.5px] text-ink-3">部门负责人只读查看本部门（含下级）。</p>}
+    </section>
+    <section className={cn(card, 'min-h-0 overflow-auto')}>
+      {error && <p role="alert" className="m-3 text-[13px] text-rose">{error}</p>}
+      <table className="w-full text-left text-[13px]">
+        <thead className="sticky top-0 bg-hover text-[12px] text-ink-3"><tr>{['成员', '部门', '角色', '最近登录', ''].map(h => <th key={h} className="px-4 py-2.5 font-medium">{h}</th>)}</tr></thead>
+        <tbody className="divide-y divide-line">
+          {!members.length && <tr><td colSpan={5} className="px-4 py-10 text-center text-ink-3">该部门暂无成员</td></tr>}
+          {members.map(m => <tr key={m.id}>
+            <td className="px-4 py-2.5"><p className="font-medium">{m.name}</p><p className="text-[11.5px] text-ink-3">{m.email}</p></td>
+            <td className="px-4 py-2.5">{m.department_id ? name(m.department_id) : <span className="text-amber">未分配</span>}</td>
+            <td className="px-4 py-2.5"><Badge tone={roleTone(m.role)}>{ROLE_TEXT[m.role]}</Badge></td>
+            <td className="px-4 py-2.5 text-ink-2 tabular-nums">{fmtTime(m.last_login_at)}</td>
+            <td className="px-4 py-2.5 text-right">{!data.readonly && <Button size="small" variant="ghost" onClick={() => { setMoving(m); setTarget(m.department_id ?? '') }}>调整部门</Button>}</td>
+          </tr>)}
+        </tbody>
+      </table>
+    </section>
+    {edit && <Dialog open onOpenChange={v => !v && !busy && setEdit(undefined)} title={edit.id ? '编辑部门' : '新建部门'} footer={<><Button onClick={() => setEdit(undefined)}>取消</Button><Button variant="primary" loading={busy} disabled={!edit.name.trim()} onClick={async () => { if (await run(() => edit.id ? updateDepartment(edit.id, { name: edit.name.trim(), parent_id: edit.parent_id || null }) : createDepartment({ name: edit.name.trim(), parent_id: edit.parent_id || null }), edit.id ? '部门已更新' : '部门已创建')) setEdit(undefined) }}>保存</Button></>}>
+      <div className="space-y-3"><Field label="部门名称" required><Input value={edit.name} maxLength={100} onChange={e => setEdit({ ...edit, name: e.target.value })} /></Field><Field label="上级部门"><Select value={edit.parent_id} onValueChange={v => setEdit({ ...edit, parent_id: v })} options={opts} /></Field>{error && <p role="alert" className="text-[13px] text-rose">{error}</p>}</div>
+    </Dialog>}
+    {moving && <Dialog open onOpenChange={v => !v && !busy && setMoving(undefined)} title={`调整部门 · ${moving.name}`} description="成员只属于一个部门；部门共享与审批按此部门计算。" footer={<><Button onClick={() => setMoving(undefined)}>取消</Button><Button variant="primary" loading={busy} onClick={async () => { if (await run(() => setMemberDepartment(moving.id, target || null), '已调整部门')) setMoving(undefined) }}>保存</Button></>}>
+      <Select value={target} onValueChange={setTarget} options={[{ value: '', label: '未分配' }, ...tree.map(d => ({ value: d.id, label: `${'　'.repeat(d.depth)}${d.name}` }))]} />{error && <p role="alert" className="mt-2 text-[13px] text-rose">{error}</p>}
+    </Dialog>}
+    <ConfirmDialog open={!!removing} onOpenChange={v => !v && setRemoving(undefined)} title={`删除部门「${removing?.name}」？`} description="只能删除没有成员、下级部门和负责人的空部门。" confirmText="删除" danger onConfirm={() => { if (removing) void run(() => deleteDepartment(removing.id), '部门已删除'); setRemoving(undefined) }} />
+  </div>
 }
 
-function Members() {
+function Heads({ data, reload }: { data: { departments: OrgDepartment[], members: OrgMember[], readonly: boolean }, reload: () => void }) {
+  const q = useQuery(listHeads, [])
+  const toast = useToast()
+  const [adding, setAdding] = useState<OrgDepartment>()
+  const [pick, setPick] = useState('')
+  const [error, setError] = useState('')
+  const tree = flatten(data.departments)
+  const chain = (id: string) => { const out: string[] = []; for (let d = data.departments.find(x => x.id === id); d; d = data.departments.find(x => x.id === d!.parent_id)) out.push(d.id); return out }
+  const act = async (fn: () => Promise<unknown>, ok: string) => { setError(''); try { await fn(); toast(ok); q.reload(); reload(); return true } catch (e) { setError((e as Error).message); return false } }
+  return <section className={cn(card, 'min-h-0 overflow-auto')}>
+    {error && <p role="alert" className="m-3 text-[13px] text-rose">{error}</p>}
+    <ErrorBar error={q.error} onRetry={q.reload} />
+    <table className="w-full text-left text-[13px]">
+      <thead className="sticky top-0 bg-hover text-[12px] text-ink-3"><tr>{['部门', '负责人', ''].map(h => <th key={h} className="px-4 py-2.5 font-medium">{h}</th>)}</tr></thead>
+      <tbody className="divide-y divide-line">{tree.map(d => {
+        const heads = (q.data?.data ?? []).filter(h => h.department_id === d.id)
+        return <tr key={d.id}>
+          <td className="px-4 py-2.5" style={{ paddingLeft: 16 + d.depth * 16 }}>{d.name}</td>
+          <td className="px-4 py-2.5"><div className="flex flex-wrap gap-1.5">{!heads.length && <span className="text-ink-3">未设置</span>}{heads.map(h => <span key={h.account_id} className="inline-flex items-center gap-1 rounded-md bg-hover px-2 py-0.5">{h.name}{!data.readonly && <button type="button" aria-label={`移除 ${h.name}`} className="cursor-pointer text-ink-3 hover:text-rose" onClick={() => void act(() => removeHead(d.id, h.account_id), `已移除 ${h.name}`)}>×</button>}</span>)}</div></td>
+          <td className="px-4 py-2.5 text-right">{!data.readonly && <Button size="small" variant="ghost" onClick={() => { setAdding(d); setPick('') }}>设置负责人</Button>}</td>
+        </tr>
+      })}</tbody>
+    </table>
+    {adding && <Dialog open onOpenChange={v => !v && setAdding(undefined)} title={`设置负责人 · ${adding.name}`} description="从该部门及上级部门成员中选择；一个部门可有多位负责人。" footer={<><Button onClick={() => setAdding(undefined)}>取消</Button><Button variant="primary" disabled={!pick} onClick={async () => { if (await act(() => addHead(adding.id, pick), '已设置部门负责人')) setAdding(undefined) }}>确定</Button></>}>
+      <Select value={pick} onValueChange={setPick} placeholder="选择成员" options={data.members.filter(m => m.department_id && chain(adding.id).includes(m.department_id) && !adding.head_ids.includes(m.id)).map(m => ({ value: m.id, label: `${m.name} · ${data.departments.find(x => x.id === m.department_id)?.name}` }))} />
+      {error && <p role="alert" className="mt-2 text-[13px] text-rose">{error}</p>}
+    </Dialog>}
+  </section>
+}
+
+function Identity() {
+  const q = useQuery(getIdentitySource, [])
+  const s = q.data
+  return <section className={cn(card, 'max-w-3xl p-5')}>
+    <ErrorBar error={q.error} onRetry={q.reload} />
+    {s && <dl className="grid grid-cols-[120px_1fr] gap-y-3 text-[13.5px]">
+      <dt className="text-ink-3">身份来源</dt><dd>统一身份 Auth</dd>
+      <dt className="text-ink-3">Issuer</dt><dd className="font-mono text-[12.5px]">{s.issuer}</dd>
+      <dt className="text-ink-3">登录方式</dt><dd>{s.methods.join('；')}</dd>
+      <dt className="text-ink-3">接入状态</dt><dd>{s.configured ? <Badge tone="mint" dot>已配置</Badge> : <Badge tone="amber" dot>未配置</Badge>}</dd>
+      <dt className="text-ink-3">说明</dt><dd className="leading-6 text-ink-2">{s.note}<br />后续可从 Auth 的 organization_units 同步部门。</dd>
+    </dl>}
+  </section>
+}
+
+export default function Org() {
+  const [tab, setTab] = useState<Tab>('members')
   const q = useQuery(getOrg, [])
-  const [dept, setDept] = useState('')
-  const [kw, setKw] = useState('')
-  const deps = q.data?.departments ?? []
-  const list = (q.data?.members ?? []).filter(m => (!dept || m.dept === dept) && (!kw || `${m.name}${m.email}${m.title}`.includes(kw)))
-  const roleText = (r: Member['role']) => (r === 'user' ? '业务用户' : ROLE_LABEL[r])
-  return (
-      <div className="grid w-full grid-cols-[260px_1fr] gap-5 max-lg:grid-cols-1">
-        <Section title="部门" bodyClass="p-2">
-          {q.error && <ErrorBar error={q.error} onRetry={q.reload} />}
-          <button type="button" onClick={() => setDept('')} className={cn('flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-left text-[13.5px]', !dept ? 'bg-volt-soft font-medium text-volt-text' : 'hover:bg-hover')}>全部</button>
-          {deps.map(d => (
-            <button key={d.id} type="button" onClick={() => setDept(d.name)} className={cn('flex w-full cursor-pointer items-center gap-2 rounded-md py-2 pr-3 text-left text-[13.5px]', d.parent ? 'pl-7' : 'pl-3', dept === d.name ? 'bg-volt-soft font-medium text-volt-text' : 'hover:bg-hover')}>
-              <RiBuilding2Line className="size-4 text-ink-3" /><span className="flex-1 truncate">{d.name}</span><span className="text-[12px] text-ink-3">{d.members}</span>
-            </button>
-          ))}
-        </Section>
-        <Section title={dept || '全部成员'} actions={<Input className="h-8 w-56" placeholder="搜索姓名、邮箱、岗位" value={kw} onChange={e => setKw(e.target.value)} />} bodyClass="p-0">
-          <table className="w-full text-[13px]">
-            <thead className="bg-surface text-left text-[12px] text-ink-3"><tr><th className="px-5 py-2 font-medium">成员</th><th className="px-3 font-medium">部门 / 岗位</th><th className="px-3 font-medium">角色</th><th className="px-3 font-medium">常用 xBuddy</th><th className="px-3 font-medium">最近登录</th></tr></thead>
-            <tbody>
-              {list.map(m => (
-                <tr key={m.id} className="border-t border-line">
-                  <td className="px-5 py-2.5"><p className="font-medium">{m.name}</p><p className="text-[12px] text-ink-3">{m.email}</p></td>
-                  <td className="px-3 text-ink-2">{m.dept}<p className="text-[12px] text-ink-3">{m.title}</p></td>
-                  <td className="px-3"><Badge tone={m.role === 'super_admin' || m.role === 'admin' ? 'volt' : 'neutral'}>{roleText(m.role)}</Badge></td>
-                  <td className="px-3 text-ink-2">{m.apps.join('、')}</td>
-                  <td className="px-3 text-ink-3">{new Date(m.last_login).toLocaleDateString('zh-CN')}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Section>
-      </div>
-  )
-}
-
-
-function Groups() {
-  const toast = useToast()
-  const q = useQuery(listGroups, [])
-  const [open, setOpen] = useState(false)
-  const [name, setName] = useState('')
-  const [type, setType] = useState<'static' | 'dynamic'>('static')
-  const [rule, setRule] = useState('')
-  return (
-    <div className="w-full">
-      <Section title="用户组" desc="静态用户组手动维护；动态用户组按部门、岗位等规则自动更新。" actions={<Button variant="primary" onClick={() => setOpen(true)}><RiAddLine className="size-4" />新建用户组</Button>} bodyClass="p-0">
-        <table className="w-full text-[13px]">
-          <thead className="bg-surface text-left text-[12px] text-ink-3"><tr><th className="px-5 py-2 font-medium">用户组</th><th className="px-3 font-medium">类型与规则</th><th className="px-3 font-medium">成员</th><th className="px-3 font-medium">用在哪里</th><th className="px-3 font-medium">负责人</th></tr></thead>
-          <tbody>{(q.data?.data ?? []).map(g => <tr key={g.id} className="border-t border-line align-top"><td className="px-5 py-2.5 font-medium">{g.name}</td><td className="px-3 py-2.5"><Badge tone={g.type === 'dynamic' ? 'volt' : 'neutral'}>{g.type === 'dynamic' ? '动态' : '静态'}</Badge><p className="mt-1 text-[12px] text-ink-3">{g.rule}</p></td><td className="px-3 py-2.5 tabular-nums">{g.members}</td><td className="px-3 py-2.5 text-[12.5px] text-ink-2">{g.used_by.join('；') || '—'}</td><td className="px-3 py-2.5 text-ink-2">{g.owner}</td></tr>)}</tbody>
-        </table>
-      </Section>
-      <Dialog open={open} onOpenChange={setOpen} title="新建用户组" footer={<><Button onClick={() => setOpen(false)}>取消</Button><Button variant="primary" disabled={!name.trim()} onClick={async () => { await createGroup({ name, type, rule }); setOpen(false); setName(''); setRule(''); toast('已新建'); q.reload() }}>新建</Button></>}>
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4"><Field label="名称"><Input value={name} onChange={e => setName(e.target.value)} placeholder="例如：客服一线" /></Field><Field label="类型"><Select value={type} onValueChange={setType} options={[{ value: 'static', label: '静态（手动维护）' }, { value: 'dynamic', label: '动态（按规则）' }]} /></Field></div>
-          {type === 'dynamic' && <Field label="规则" hint="按部门、岗位或加入的工作流自动计算成员。"><Input value={rule} onChange={e => setRule(e.target.value)} placeholder="部门属于「客服中心」且岗位包含「坐席」" /></Field>}
-        </div>
-      </Dialog>
+  return <main className="flex min-h-0 flex-1 flex-col p-6">
+    <header><ModuleTitle>组织与成员</ModuleTitle><p className="mt-2 text-sm text-ink-3">账号来自统一身份，部门在本平台维护。成员只属于一个部门，部门共享与审批按所属部门计算。</p></header>
+    <Segmented<Tab> className="mt-4 self-start" value={tab} onValueChange={setTab} options={[{ value: 'members', label: '成员与部门' }, { value: 'heads', label: '部门负责人' }, { value: 'identity', label: '身份来源' }]} />
+    <div className="mt-4 flex min-h-0 flex-1 flex-col"><ErrorBar error={q.error} onRetry={q.reload} />
+      {tab === 'identity' ? <Identity /> : q.data && (tab === 'members' ? <Members data={q.data} reload={() => void q.refresh()} /> : <Heads data={q.data} reload={() => void q.refresh()} />)}
     </div>
-  )
-}
-
-function Sync() {
-  const toast = useToast()
-  const q = useQuery(getDirectorySync, [])
-  const d = q.data
-  if (!d)
-    return null
-  return (
-    <div className="w-full space-y-5">
-      <Section title="通讯录同步" desc="成员、部门与上下级从企业通讯录同步；停用的成员立即失去登录与调用权限。" actions={<><StatusTag status={d.status} /><Button onClick={async () => { await runDirectorySync(); toast('已同步'); q.reload() }}><RiRefreshLine className="size-4" />立即同步</Button></>}>
-        <KV cols={4} items={[['同步来源', d.source === 'feishu' ? '飞书通讯录' : d.source === 'oidc' ? '统一身份（OIDC）' : '手动维护'], ['同步频率', d.schedule], ['上次同步', new Date(d.last_sync).toLocaleString('zh-CN')], ['部门 / 成员', `${d.departments} / ${d.members}`]]} />
-      </Section>
-      <div className="grid grid-cols-2 gap-5 max-lg:grid-cols-1">
-        <Section title="字段映射" bodyClass="p-0"><table className="w-full text-[13px]"><tbody>{d.mapping.map(m => <tr key={m.field} className="border-t border-line first:border-t-0"><td className="px-5 py-2.5">{m.field}</td><td className="px-3 py-2.5 font-mono text-[12.5px] text-ink-2">{m.from}</td></tr>)}</tbody></table></Section>
-        <Section title="同步记录" bodyClass="p-0">{d.log.map(l => <div key={l.time} className="flex gap-4 border-t border-line px-5 py-2.5 text-[13px] first:border-t-0"><span className="w-40 shrink-0 text-ink-3">{new Date(l.time).toLocaleString('zh-CN')}</span><span>{l.text}</span></div>)}</Section>
-      </div>
-    </div>
-  )
+  </main>
 }

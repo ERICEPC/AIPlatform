@@ -9,7 +9,7 @@ export function ReleaseFields({ value, onChange, agent = false }: { value: Relea
   const [auth, setAuth] = useState<Authority>(), [error, setError] = useState('')
   useEffect(() => { getAuthority().then(setAuth).catch(e => setError(e.message)) }, [])
   const privateMode = value.visibility === 'private'
-  const eligible = auth?.departments.filter(d => auth.role === 'super_admin' || auth.member_department_ids.includes(d.id)) || []
+  const eligible = auth?.departments.filter(d => auth.role === 'super_admin' || auth.department_id === d.id) || []
   return <div className="space-y-4 text-[13px] leading-5">
     {error && <p role="alert" className="text-rose">{error}</p>}
     <Field label="可见范围">

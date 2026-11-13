@@ -134,7 +134,7 @@ export function McpDrawer({ mcp, onClose, onEdit, onChanged }: { mcp?: ToolColle
     >
       {mcp && (
         <div className="space-y-5 pt-2">
-          <ResourceVisibility kind="mcp" id={mcp.id} onLoaded={setAccess} />
+          <ResourceVisibility kind="mcp" id={mcp.id} name={mcp.name} published={!!mcp.is_team_authorization} onLoaded={setAccess} />
           <div className={cn('flex items-center gap-3 rounded-2xl border px-4 py-3', mcp.is_team_authorization ? 'border-mint/30 bg-mint-soft' : 'border-amber/40 bg-amber-soft')}>
             {mcp.is_team_authorization ? <RiShieldCheckLine className="size-5 text-mint" /> : <RiLockUnlockLine className="size-5 text-amber" />}
             <div className="flex-1">

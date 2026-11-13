@@ -17,7 +17,6 @@ import {
   RiDatabase2Line,
   RiFileShieldLine,
   RiFlashlightLine,
-  RiGitBranchLine,
   RiNotification3Line,
   RiOrganizationChart,
   RiQuestionLine,
@@ -26,7 +25,6 @@ import {
   RiServerLine,
   RiShieldStarLine,
   RiSpeedUpLine,
-  RiStackLine,
   RiTeamLine,
   RiUserSettingsLine,
 } from '@remixicon/react'
@@ -113,15 +111,11 @@ export const ADMIN_NAV: NavGroup[] = [
     { path: 'admin/org', label: '组织与成员', color: '#12a594', icon: RiOrganizationChart },
     { path: 'admin/admins', label: '管理员与权限', color: '#7c5cff', icon: RiShieldStarLine },
     { path: 'admin/spaces', label: '业务空间', color: '#1f9d55', icon: RiBriefcase4Line },
-  ] },
-  { title: '平台', items: [
-    { path: 'admin/apps', label: '应用接入（xBuddy）', color: '#8b5cf6', icon: RiGitBranchLine },
-    { path: 'admin/stack', label: 'AI 技术栈组件', color: '#1e3a8a', icon: RiStackLine },
     { path: 'admin/audit', label: '审计日志', color: '#64748b', icon: RiUserSettingsLine },
   ] },
 ]
-
-export function canSeeAdmin(path:string,p:Permissions|null){const permission:Record<string,string>={'admin':'ops.view','admin/approvals':'release.approve','admin/org':'org.members','admin/admins':'super','admin/apps':'apps.view','admin/audit':'audit.view'};return !!p&&(p.role==='super_admin'||(permission[path]!=='super'&&p.permissions.includes(permission[path]||'ops.view')))}
+/* 应用接入（xBuddy）与 AI 技术栈组件不再出现在导航与页面搜索中；路由保留，仅超级管理员可直接打开 */
+export function canSeeAdmin(path:string,p:Permissions|null){const permission:Record<string,string>={'admin':'ops.view','admin/approvals':'release.approve','admin/org':'org.members','admin/admins':'super','admin/spaces':'ops.view','admin/apps':'super','admin/stack':'super','admin/audit':'audit.view'};const need=permission[path.split('/').slice(0,2).join('/')]||'ops.view';return !!p&&(p.role==='super_admin'||(need!=='super'&&p.permissions.includes(need)))}
 
 function NavLink({ item, current, go }: { item: NavItem, current: string, go: (path: string) => void }) {
   const active = (item.match ?? [item.path]).some(m => (m.endsWith('/') ? current === m.slice(0, -1) : current === m || current.startsWith(`${m}/`)))

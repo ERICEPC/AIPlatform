@@ -87,9 +87,18 @@ for blueprint in (bp, public_bp):
 @bp.get('')
 @login_required
 def listing():
-    _, tid = identity()
-    return jsonify(teams=[team_view(tid, item) for item in store.rows('''SELECT t.*,v.version published_version,v.revision published_revision FROM raccoon_teams t
-        LEFT JOIN raccoon_team_versions v ON v.id=t.published_id WHERE t.tenant_id=:tid AND t.deleted_at IS NULL ORDER BY t.updated_at DESC''', tid=tid)], agents=agents(tid), workspace_id=tid)
+    uid, tid = identity()
+    # Non-owners see a team only when shared to the workspace or to one of
+    # their departments (membership in a child department inherits ancestors).
+    return jsonify(teams=[team_view(tid, item) for item in store.rows('''WITH RECURSIVE ancestors(id,parent_id) AS (
+          SELECT d.id,d.parent_id FROM rx_departments d JOIN rx_department_members m ON m.tenant_id=d.tenant_id AND m.department_id=d.id
+          WHERE d.tenant_id=:tid AND m.account_id=:uid
+          UNION SELECT d.id,d.parent_id FROM rx_departments d JOIN ancestors a ON a.parent_id=d.id WHERE d.tenant_id=:tid)
+        SELECT t.*,v.version published_version,v.revision published_revision FROM raccoon_teams t
+        LEFT JOIN raccoon_team_versions v ON v.id=t.published_id WHERE t.tenant_id=:tid AND t.deleted_at IS NULL
+        AND (t.created_by=:uid OR EXISTS(SELECT 1 FROM resource_visibility rv WHERE rv.tenant_id=t.tenant_id AND rv.kind='team' AND rv.resource_id=t.id AND rv.visibility='public')
+          OR EXISTS(SELECT 1 FROM rx_resource_departments rd WHERE rd.tenant_id=t.tenant_id AND rd.kind='team' AND rd.resource_id=t.id AND rd.department_id IN (SELECT id FROM ancestors)))
+        ORDER BY t.updated_at DESC''', tid=tid, uid=uid)], agents=agents(tid), workspace_id=tid)
 
 
 @bp.post('')

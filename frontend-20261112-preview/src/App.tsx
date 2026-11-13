@@ -6,7 +6,12 @@ import {DemoFrame} from '@/components/demo-frame'
 import {PageSearch} from '@/components/page-search'
 import {isDemoPath} from '@/lib/feature-modes'
 import ApplicationOperations, { ApplicationAuthorization } from '@/pages/ApplicationOperations'
-import Governance from '@/pages/Governance'
+import MyReleases from '@/pages/my-releases'
+import Approvals from '@/pages/admin/approvals'
+import Org from '@/pages/admin/org'
+import Admins from '@/pages/admin/admins'
+import Spaces from '@/pages/admin/spaces'
+import Audit from '@/pages/admin/audit'
 import Review from '@/pages/Review'
 import { getAccountProfile } from '@/api/settings'
 import { currentUser as me } from '@/lib/current-user'
@@ -59,7 +64,7 @@ export default function App() {
   const checkSession = async () => {
     setChecking(true)
     try { const p = await getAccountProfile(); Object.assign(me, {id:p.id, owner:p.name, role:p.email, avatar:p.avatar_url || me.avatar, status:''}); setPermissions(await getPermissions()); setAuthenticated(true); if (!location.hash || location.hash === '#login') { const back=sessionStorage.getItem('rx-authorization-return');sessionStorage.removeItem('rx-authorization-return');location.hash=(back?.startsWith('#app-authorize?') || back?.startsWith('#device-authorize/'))?back:'assistant' } }
-    catch { preserveAuthorization(); setPermissions(null); setAuthenticated(false); location.hash = 'login' }
+    catch { preserveAuthorization(); setPermissions(null); setAuthenticated(false); if (!location.hash.startsWith('#login')) location.hash = 'login' }
     finally {setChecking(false)}
   }
   useEffect(() => { checkSession(); const expired = () => {preserveAuthorization(); setPermissions(null); setAuthenticated(false); location.hash = 'login'}; addEventListener('rx-session-expired', expired); return () => removeEventListener('rx-session-expired', expired) }, [])
@@ -83,12 +88,12 @@ export default function App() {
     case 'assistant': page = <Assistant go={go} initialSessionId={param} />; break
     case 'config': page = <Config go={go} />; break
     case 'collab': page = <Collab theme={theme} initialGroupId={param} />; break
-    case 'releases': page = <Governance />; break
+    case 'releases': page = <MyReleases go={go} />; break
     case 'app-integrations': page = <ApplicationOperations />; break
     case 'operations': page = <ApplicationOperations operations />; break
     case 'device-authorize': page = <DeviceAuthorization id={param || ''} />; break
     case 'app-authorize': page = <ApplicationAuthorization />; break
-    case 'admin': page = !canSeeAdmin(path,perms)?<div role="alert" className="p-10">你没有此管理功能的权限。</div>:param==='apps'?<ApplicationOperations />:!param?<ApplicationOperations operations />:<Governance key={param} admin initialTab={param==='org'?'org':param==='admins'?'admins':param==='audit'?'audit':'approvals'} />; break
+    case 'admin': page = !canSeeAdmin(path,perms)?<div role="alert" className="p-10">你没有此管理功能的权限。</div>:param==='apps'?<ApplicationOperations />:!param?<ApplicationOperations operations />:param==='org'?<Org />:param==='admins'?<Admins />:param==='spaces'?<Spaces />:param==='audit'?<Audit />:<Approvals id={sub} go={go} />; break
     case 'review': page = <Review go={go} />; break;
     case 'agents': page = <AgentsModule param={param} sub={sub} go={go} theme={theme} />; break
     case 'teams': page = <TeamsModule param={param} sub={sub} go={go} theme={theme} />; break

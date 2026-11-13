@@ -4,6 +4,8 @@
 import type { AccountProfile, ChangePasswordBody, CommonResult, InterfaceLanguage } from '../settings'
 import { me } from '@/data'
 import { ApiError } from '../http'
+import { currentDemo } from './governance'
+import { asset } from '@/lib/asset'
 
 const ok = (): CommonResult => ({ result: 'success' })
 
@@ -20,7 +22,12 @@ let account: AccountProfile = {
   created_at: 1735689600,
 }
 
-export const profile = () => ({ ...account })
+/** 演示账号：未选择时视为未登录 */
+export const profile = () => {
+  const demo = currentDemo()
+  if (!demo) throw new ApiError('请先选择演示账号', 401)
+  return { ...account, id: `acc-${demo.person}`, name: demo.name, email: `${demo.person.slice(2)}@sensetime.com`, avatar_url: asset(demo.avatar), role: demo.title }
+}
 
 export function setName(name: string) {
   const v = name.trim()

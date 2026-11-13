@@ -3,11 +3,12 @@ import { request } from '@/api/http'
 import { Menu } from '@/components/ui/menu'
 import { RiExpandUpDownLine } from '@remixicon/react'
 import { useState } from 'react'
+import { workspaceInfo } from '@/api/mock/governance'
 
 type Space = { id: string, name: string, current: boolean }
 export function TeamSwitcher() {
-  const q = useQuery(() => request<{ workspaces: Space[] }>({ method: 'GET', path: '/workspaces' }, () => ({ workspaces: [] })), [])
-  const members = useQuery(() => request<{ accounts: { id: string }[] }>({ method: 'GET', path: '/workspaces/current/members' }, () => ({ accounts: [] })), [])
+  const q = useQuery(() => request<{ workspaces: Space[] }>({ method: 'GET', path: '/workspaces' }, () => ({ workspaces: workspaceInfo().workspaces })), [])
+  const members = useQuery(() => request<{ accounts: { id: string }[] }>({ method: 'GET', path: '/workspaces/current/members' }, () => ({ accounts: workspaceInfo().accounts })), [])
   const [error, setError] = useState('')
   const spaces = q.data?.workspaces || []
   const current = spaces.find(s => s.current)

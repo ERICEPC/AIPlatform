@@ -105,6 +105,7 @@ from .auth import (
     login,
     oauth,
     oauth_server,
+    partner_auth,
 )
 
 # Import billing controllers
@@ -226,6 +227,7 @@ __all__ = [
     "onboarding",
     "ops_trace",
     "parameter",
+    "partner_auth",
     "plugin",
     "rag_pipeline",
     "rag_pipeline_datasets",

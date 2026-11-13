@@ -14,6 +14,7 @@ import { Badge, EmptyState, Panel, Skeleton } from '@/components/ui/primitives'
 import { Segmented } from '@/components/ui/segmented'
 import { Tip } from '@/components/ui/tooltip'
 import { cn } from '@/lib/cn'
+import { ResourceVisibility } from '@/components/resource-visibility'
 import { useAgentSource } from './agent-source'
 import { ConflictBanner, CURRENT_USER, fmtAgo, TeamAvatar, useDebounced } from './shared'
 import { CreateTeamDialog, LineUp, useTeamActions } from './team-dialogs'
@@ -37,7 +38,8 @@ function TeamCard({ team, resolve, go, onChanged, onConflict }: { team: Team, re
             {team.published_id ? <Badge tone="mint" dot>已发布 v{team.published_version}</Badge> : <Badge>草稿</Badge>}
             <span onClick={e => e.stopPropagation()}><Menu items={items} /></span>
           </div>
-          <p className="mt-3 line-clamp-2 text-[13.5px] leading-relaxed text-ink-2">{c.description || splitGoal(c.goal)[0]}</p>
+          <ResourceVisibility kind="team" id={team.id} name={team.name} published={!!team.published_id} />
+          <p className="mt-1 line-clamp-2 text-[13.5px] leading-relaxed text-ink-2">{c.description || splitGoal(c.goal)[0]}</p>
           <div className="mt-auto pt-5"><LineUp config={c} resolve={resolve} /></div>
         </div>
       </SpotlightCard>

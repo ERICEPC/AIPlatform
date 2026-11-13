@@ -100,7 +100,7 @@ export function McpInstalled({ query, onMarketplace }: { query: McpListQuery, on
                             <span title={`从 ${sourceLabel[m.imported_from]} 导入`}><PluginTile icon={sourceIcon[m.imported_from]} size={22} /></span>
                           )}
                         </div>
-                        <ResourceVisibility kind="mcp" id={m.id} />
+                        <ResourceVisibility kind="mcp" id={m.id} name={tr(m.label) || m.name} published={!!m.is_team_authorization} />
                         <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-4">
                           {m.is_team_authorization
                             ? <Badge tone="mint" className="h-5 px-2 text-[11px]"><RiShieldCheckLine className="size-3" />已授权 · {m.tools.length} 个工具</Badge>

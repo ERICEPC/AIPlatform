@@ -106,3 +106,35 @@ CREATE TABLE IF NOT EXISTS rx_governance_audit (
  detail jsonb NOT NULL DEFAULT '{}', created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS rx_governance_audit_scope ON rx_governance_audit(tenant_id,department_id,created_at);
+
+-- Governance revamp: department heads, share approvals, team visibility (additive, idempotent)
+CREATE TABLE IF NOT EXISTS rx_department_heads (
+ tenant_id varchar(36) NOT NULL, department_id varchar(36) NOT NULL,
+ account_id varchar(36) NOT NULL, granted_by varchar(36),
+ granted_at timestamptz NOT NULL DEFAULT now(),
+ PRIMARY KEY(tenant_id,department_id,account_id)
+);
+CREATE INDEX IF NOT EXISTS rx_department_heads_account ON rx_department_heads(tenant_id,account_id);
+ALTER TABLE rx_releases ADD COLUMN IF NOT EXISTS assignee varchar(16) NOT NULL DEFAULT 'dept_head';
+ALTER TABLE rx_releases ADD COLUMN IF NOT EXISTS approved_visibility varchar(16);
+ALTER TABLE rx_releases ADD COLUMN IF NOT EXISTS forwarded_by varchar(36);
+ALTER TABLE rx_releases ADD COLUMN IF NOT EXISTS forwarded_at timestamptz;
+ALTER TABLE rx_releases ADD COLUMN IF NOT EXISTS forward_comment text;
+ALTER TABLE rx_releases ADD COLUMN IF NOT EXISTS applicant_department_id varchar(36);
+UPDATE rx_releases SET assignee='super_admin' WHERE visibility='workspace' AND assignee='dept_head' AND forwarded_by IS NULL;
+UPDATE rx_releases SET applicant_department_id=department_id WHERE applicant_department_id IS NULL AND department_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS rx_releases_resource ON rx_releases(tenant_id,kind,resource_id,created_at);
+CREATE INDEX IF NOT EXISTS rx_governance_audit_time ON rx_governance_audit(tenant_id,created_at);
+DO $$
+DECLARE c record;
+BEGIN
+ FOR c IN SELECT con.conname FROM pg_constraint con JOIN pg_class rel ON rel.oid=con.conrelid
+   WHERE rel.relname='resource_visibility' AND con.contype='c'
+     AND pg_get_constraintdef(con.oid) LIKE '%kind%' AND con.conname<>'resource_visibility_kind_check_v2'
+ LOOP
+   EXECUTE format('ALTER TABLE resource_visibility DROP CONSTRAINT %I', c.conname);
+ END LOOP;
+ IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='resource_visibility_kind_check_v2') THEN
+   ALTER TABLE resource_visibility ADD CONSTRAINT resource_visibility_kind_check_v2 CHECK (kind IN ('agent','team','skill','mcp'));
+ END IF;
+END $$;
