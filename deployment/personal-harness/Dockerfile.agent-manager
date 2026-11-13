@@ -1,0 +1,7 @@
+ARG BASE
+FROM ${BASE}
+USER root
+COPY *.mjs /app/
+COPY platform-ca.pem /app/platform-ca.pem
+RUN chown 1000:1000 /app/*.mjs /app/platform-ca.pem
+USER 1000:1000

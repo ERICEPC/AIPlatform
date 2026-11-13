@@ -1,0 +1,626 @@
+[
+  {
+    "id": 1,
+    "slug": "reading",
+    "name": "阅读",
+    "pose": "holding an open book, absorbed in reading"
+  },
+  {
+    "id": 2,
+    "slug": "office",
+    "name": "办公",
+    "pose": "typing on a small laptop"
+  },
+  {
+    "id": 3,
+    "slug": "teamwork",
+    "name": "团队协作",
+    "pose": "two matching raccoons joining two puzzle pieces together"
+  },
+  {
+    "id": 4,
+    "slug": "programming",
+    "name": "编程",
+    "pose": "holding a laptop with a simple code bracket symbol"
+  },
+  {
+    "id": 5,
+    "slug": "data",
+    "name": "数据分析",
+    "pose": "holding a small board with a simple bar chart and magnifying glass"
+  },
+  {
+    "id": 6,
+    "slug": "support",
+    "name": "客服",
+    "pose": "wearing a headset with microphone, welcoming open paw"
+  },
+  {
+    "id": 7,
+    "slug": "sales",
+    "name": "销售",
+    "pose": "holding a business briefcase and offering a friendly handshake"
+  },
+  {
+    "id": 8,
+    "slug": "marketing",
+    "name": "营销",
+    "pose": "holding a small megaphone"
+  },
+  {
+    "id": 9,
+    "slug": "finance",
+    "name": "财务",
+    "pose": "holding a calculator and coin"
+  },
+  {
+    "id": 10,
+    "slug": "legal",
+    "name": "法务",
+    "pose": "holding a small balance scale"
+  },
+  {
+    "id": 11,
+    "slug": "hr",
+    "name": "人事",
+    "pose": "holding a clipboard with simple three-person symbols"
+  },
+  {
+    "id": 12,
+    "slug": "education",
+    "name": "教育",
+    "pose": "wearing a graduation cap and holding a book"
+  },
+  {
+    "id": 13,
+    "slug": "healthcare",
+    "name": "医疗",
+    "pose": "wearing a white coat with stethoscope"
+  },
+  {
+    "id": 14,
+    "slug": "science",
+    "name": "科研",
+    "pose": "wearing safety goggles and holding a flask"
+  },
+  {
+    "id": 15,
+    "slug": "manufacturing",
+    "name": "制造",
+    "pose": "wearing a work cap and holding a gear and wrench"
+  },
+  {
+    "id": 16,
+    "slug": "construction",
+    "name": "建筑",
+    "pose": "wearing a hard hat and holding rolled blueprints"
+  },
+  {
+    "id": 17,
+    "slug": "logistics",
+    "name": "物流",
+    "pose": "holding a cardboard parcel beside a tiny delivery trolley"
+  },
+  {
+    "id": 18,
+    "slug": "retail",
+    "name": "零售",
+    "pose": "holding a shopping basket"
+  },
+  {
+    "id": 19,
+    "slug": "food",
+    "name": "餐饮",
+    "pose": "wearing a chef hat and holding a wooden spoon"
+  },
+  {
+    "id": 20,
+    "slug": "agriculture",
+    "name": "农业",
+    "pose": "wearing a straw hat and holding a seedling"
+  },
+  {
+    "id": 21,
+    "slug": "energy",
+    "name": "能源",
+    "pose": "holding a miniature solar panel with small lightning symbol"
+  },
+  {
+    "id": 22,
+    "slug": "travel",
+    "name": "文旅",
+    "pose": "holding a suitcase and camera"
+  },
+  {
+    "id": 23,
+    "slug": "media",
+    "name": "传媒",
+    "pose": "holding a microphone and small film clapperboard"
+  },
+  {
+    "id": 24,
+    "slug": "public-service",
+    "name": "政务",
+    "pose": "holding a service clipboard with a simple civic building symbol, welcoming gesture, no official insignia"
+  },
+  {
+    "id": 25,
+    "slug": "note-taking",
+    "name": "笔记",
+    "pose": "writing notes with pencil in a notebook"
+  },
+  {
+    "id": 26,
+    "slug": "research",
+    "name": "资料检索",
+    "pose": "holding a magnifying glass over a book"
+  },
+  {
+    "id": 27,
+    "slug": "presentation",
+    "name": "汇报",
+    "pose": "pointing at a small presentation board"
+  },
+  {
+    "id": 28,
+    "slug": "planning",
+    "name": "计划",
+    "pose": "holding a calendar with one marked day"
+  },
+  {
+    "id": 29,
+    "slug": "brainstorm",
+    "name": "创意",
+    "pose": "holding a lightbulb, excited inspired expression"
+  },
+  {
+    "id": 30,
+    "slug": "review",
+    "name": "审核",
+    "pose": "holding a checklist with checkmarks"
+  },
+  {
+    "id": 31,
+    "slug": "archive",
+    "name": "档案",
+    "pose": "holding a tidy stack of folders"
+  },
+  {
+    "id": 32,
+    "slug": "translation",
+    "name": "翻译",
+    "pose": "holding two speech bubbles with abstract glyph marks, no letters"
+  },
+  {
+    "id": 33,
+    "slug": "writing",
+    "name": "写作",
+    "pose": "holding a fountain pen and paper"
+  },
+  {
+    "id": 34,
+    "slug": "meeting",
+    "name": "会议",
+    "pose": "two raccoons at a tiny round table with one shared document"
+  },
+  {
+    "id": 35,
+    "slug": "project",
+    "name": "项目管理",
+    "pose": "holding a simple milestone timeline board"
+  },
+  {
+    "id": 36,
+    "slug": "leadership",
+    "name": "团队管理",
+    "pose": "holding a small flag beside two small teammate figurines"
+  },
+  {
+    "id": 37,
+    "slug": "handshake",
+    "name": "商务合作",
+    "pose": "two raccoons shaking paws"
+  },
+  {
+    "id": 38,
+    "slug": "remote-work",
+    "name": "远程办公",
+    "pose": "working on laptop with a little video-call symbol"
+  },
+  {
+    "id": 39,
+    "slug": "quality",
+    "name": "质量检查",
+    "pose": "inspecting a small finished product with magnifier"
+  },
+  {
+    "id": 40,
+    "slug": "security",
+    "name": "信息安全",
+    "pose": "holding a shield and a padlock"
+  },
+  {
+    "id": 41,
+    "slug": "cloud",
+    "name": "云计算",
+    "pose": "holding a fluffy cloud with a tiny server"
+  },
+  {
+    "id": 42,
+    "slug": "ai",
+    "name": "人工智能",
+    "pose": "holding a tiny friendly robot"
+  },
+  {
+    "id": 43,
+    "slug": "database",
+    "name": "数据库",
+    "pose": "holding three stacked database cylinders"
+  },
+  {
+    "id": 44,
+    "slug": "automation",
+    "name": "自动化",
+    "pose": "holding two meshing gears"
+  },
+  {
+    "id": 45,
+    "slug": "testing",
+    "name": "软件测试",
+    "pose": "holding a bug magnifier and a checkmark"
+  },
+  {
+    "id": 46,
+    "slug": "design",
+    "name": "产品设计",
+    "pose": "holding a stylus and a tablet"
+  },
+  {
+    "id": 47,
+    "slug": "network",
+    "name": "网络运维",
+    "pose": "holding a router with connected nodes"
+  },
+  {
+    "id": 48,
+    "slug": "electronics",
+    "name": "电子工程",
+    "pose": "holding a circuit board"
+  },
+  {
+    "id": 49,
+    "slug": "robotics",
+    "name": "机器人",
+    "pose": "adjusting a miniature robotic arm"
+  },
+  {
+    "id": 50,
+    "slug": "automotive",
+    "name": "汽车",
+    "pose": "holding a toy car and wrench"
+  },
+  {
+    "id": 51,
+    "slug": "aviation",
+    "name": "航空",
+    "pose": "wearing a pilot cap and holding a toy airplane"
+  },
+  {
+    "id": 52,
+    "slug": "rail",
+    "name": "铁路",
+    "pose": "wearing a conductor cap holding a miniature train"
+  },
+  {
+    "id": 53,
+    "slug": "shipping",
+    "name": "航运",
+    "pose": "wearing a sailor cap holding a tiny cargo ship"
+  },
+  {
+    "id": 54,
+    "slug": "warehouse",
+    "name": "仓储",
+    "pose": "scanning a parcel with a handheld scanner"
+  },
+  {
+    "id": 55,
+    "slug": "delivery",
+    "name": "快递",
+    "pose": "wearing a delivery cap holding parcel and route pin"
+  },
+  {
+    "id": 56,
+    "slug": "supply-chain",
+    "name": "供应链",
+    "pose": "holding three connected parcel icons"
+  },
+  {
+    "id": 57,
+    "slug": "procurement",
+    "name": "采购",
+    "pose": "holding shopping list and small package"
+  },
+  {
+    "id": 58,
+    "slug": "banking",
+    "name": "银行",
+    "pose": "holding a miniature bank building"
+  },
+  {
+    "id": 59,
+    "slug": "insurance",
+    "name": "保险",
+    "pose": "holding an umbrella over a tiny house"
+  },
+  {
+    "id": 60,
+    "slug": "investment",
+    "name": "投资研究",
+    "pose": "studying a simple rising and falling line chart"
+  },
+  {
+    "id": 61,
+    "slug": "accounting",
+    "name": "会计",
+    "pose": "holding a ledger and abacus"
+  },
+  {
+    "id": 62,
+    "slug": "audit",
+    "name": "审计",
+    "pose": "checking a receipt with magnifier"
+  },
+  {
+    "id": 63,
+    "slug": "real-estate",
+    "name": "房地产",
+    "pose": "holding house keys and small house"
+  },
+  {
+    "id": 64,
+    "slug": "architecture",
+    "name": "建筑设计",
+    "pose": "holding a miniature building model"
+  },
+  {
+    "id": 65,
+    "slug": "civil-engineering",
+    "name": "土木工程",
+    "pose": "wearing hard hat holding a miniature bridge"
+  },
+  {
+    "id": 66,
+    "slug": "mining",
+    "name": "矿业",
+    "pose": "wearing helmet with lamp holding a mineral crystal"
+  },
+  {
+    "id": 67,
+    "slug": "oil-gas",
+    "name": "油气",
+    "pose": "wearing safety helmet holding small pipeline valve"
+  },
+  {
+    "id": 68,
+    "slug": "wind",
+    "name": "风电",
+    "pose": "holding a miniature wind turbine"
+  },
+  {
+    "id": 69,
+    "slug": "water",
+    "name": "水务",
+    "pose": "holding a clear water droplet and small faucet"
+  },
+  {
+    "id": 70,
+    "slug": "environment",
+    "name": "环保",
+    "pose": "holding a recycling symbol and leaf"
+  },
+  {
+    "id": 71,
+    "slug": "forestry",
+    "name": "林业",
+    "pose": "holding a small tree sapling"
+  },
+  {
+    "id": 72,
+    "slug": "fishery",
+    "name": "渔业",
+    "pose": "holding a small fish in a bucket"
+  },
+  {
+    "id": 73,
+    "slug": "livestock",
+    "name": "畜牧",
+    "pose": "holding a tiny lamb"
+  },
+  {
+    "id": 74,
+    "slug": "horticulture",
+    "name": "园艺",
+    "pose": "watering a potted flower"
+  },
+  {
+    "id": 75,
+    "slug": "nursing",
+    "name": "护理",
+    "pose": "wearing nurse uniform holding a care clipboard, no red cross"
+  },
+  {
+    "id": 76,
+    "slug": "pharmacy",
+    "name": "药学",
+    "pose": "holding a capsule and mortar pestle"
+  },
+  {
+    "id": 77,
+    "slug": "dentistry",
+    "name": "口腔医疗",
+    "pose": "holding a tooth model and dental mirror"
+  },
+  {
+    "id": 78,
+    "slug": "veterinary",
+    "name": "兽医",
+    "pose": "wearing stethoscope cuddling a tiny puppy"
+  },
+  {
+    "id": 79,
+    "slug": "psychology",
+    "name": "心理咨询",
+    "pose": "holding a heart-shaped cushion with a calm caring smile"
+  },
+  {
+    "id": 80,
+    "slug": "fitness",
+    "name": "健身",
+    "pose": "holding a small dumbbell"
+  },
+  {
+    "id": 81,
+    "slug": "sports",
+    "name": "体育",
+    "pose": "holding a basketball"
+  },
+  {
+    "id": 82,
+    "slug": "childcare",
+    "name": "幼教",
+    "pose": "holding colorful simple alphabet-free building blocks"
+  },
+  {
+    "id": 83,
+    "slug": "training",
+    "name": "职业培训",
+    "pose": "pointing to a small skills checklist board"
+  },
+  {
+    "id": 84,
+    "slug": "library",
+    "name": "图书馆",
+    "pose": "holding a stack of books with reading glasses"
+  },
+  {
+    "id": 85,
+    "slug": "laboratory",
+    "name": "实验检测",
+    "pose": "looking into a small microscope"
+  },
+  {
+    "id": 86,
+    "slug": "biotech",
+    "name": "生物技术",
+    "pose": "holding a stylized DNA helix model"
+  },
+  {
+    "id": 87,
+    "slug": "chemistry",
+    "name": "化工",
+    "pose": "wearing goggles holding a molecular model"
+  },
+  {
+    "id": 88,
+    "slug": "textile",
+    "name": "纺织服装",
+    "pose": "holding fabric and measuring tape"
+  },
+  {
+    "id": 89,
+    "slug": "beauty",
+    "name": "美业",
+    "pose": "holding a makeup brush and mirror"
+  },
+  {
+    "id": 90,
+    "slug": "hospitality",
+    "name": "酒店",
+    "pose": "wearing concierge bow tie holding a service bell"
+  },
+  {
+    "id": 91,
+    "slug": "bakery",
+    "name": "烘焙",
+    "pose": "wearing chef hat holding bread loaf"
+  },
+  {
+    "id": 92,
+    "slug": "coffee",
+    "name": "咖啡",
+    "pose": "wearing apron holding a coffee cup"
+  },
+  {
+    "id": 93,
+    "slug": "tour-guide",
+    "name": "导游",
+    "pose": "holding a tiny flag and folded map"
+  },
+  {
+    "id": 94,
+    "slug": "photography",
+    "name": "摄影",
+    "pose": "holding a camera to one eye"
+  },
+  {
+    "id": 95,
+    "slug": "music",
+    "name": "音乐",
+    "pose": "wearing headphones holding a small guitar"
+  },
+  {
+    "id": 96,
+    "slug": "film",
+    "name": "影视",
+    "pose": "holding movie camera"
+  },
+  {
+    "id": 97,
+    "slug": "journalism",
+    "name": "新闻",
+    "pose": "holding a microphone and notepad"
+  },
+  {
+    "id": 98,
+    "slug": "creative-art",
+    "name": "艺术",
+    "pose": "holding a painter palette and brush"
+  },
+  {
+    "id": 99,
+    "slug": "ecommerce",
+    "name": "电商",
+    "pose": "holding a parcel and shopping-cart icon"
+  },
+  {
+    "id": 100,
+    "slug": "live-stream",
+    "name": "直播",
+    "pose": "speaking into a desk microphone with small camera"
+  },
+  {
+    "id": 101,
+    "slug": "community",
+    "name": "社区服务",
+    "pose": "holding a small neighborhood model with heart"
+  },
+  {
+    "id": 102,
+    "slug": "fire-service",
+    "name": "消防",
+    "pose": "wearing firefighter helmet holding a coiled hose"
+  },
+  {
+    "id": 103,
+    "slug": "emergency",
+    "name": "应急救援",
+    "pose": "wearing rescue vest holding a life buoy"
+  },
+  {
+    "id": 104,
+    "slug": "accessibility",
+    "name": "无障碍服务",
+    "pose": "holding a small accessibility ramp model with welcoming gesture"
+  }
+]

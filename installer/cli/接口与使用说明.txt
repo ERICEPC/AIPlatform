@@ -1,0 +1,111 @@
+审批版接入步骤（必读）
+1. 用 init 为项目生成固定 raccoon.json，记录 project_id 和 workspace_id。
+2. 登录中台，切换目标空间，打开「工作空间设置 → CLI 授权管理」。
+3. 申请表填写该 project_id、用途、动作与有效期。
+4. 由空间 Owner 或其委派的管理员审批；申请人不能自审。
+5. 取得批准记录 UUID 后执行 auth login --authorization <UUID>，由本人浏览器确认。
+6. 执行 auth whoami、doctor，再进行批准范围内的操作。
+旧 CLI Token 已在审批版切换时失效，不能自动迁移。此包不含 Token、管理员入口或连接私钥。
+若 Owner 需要自己的授权，须先委派空间内另一位 admin 审批；不能自审。
+审批页可下载项目配置，与 init 二选一；不要用不同 project_id 领取同一批准记录。
+撤销整个批准记录使其所有 Token 失效；退出登录只撤销当前 Token。
+审批只约束管理 CLI，不替代业务运行 API Key，也不提供操作系统级执行环境隔离。
+
+Raccoon X 通用管理 CLI 2.1.0
+合同标识：raccoon-cli-v2；日期：2026-10-23
+适用：独立 Agent 的个人开发管理。不是业务后端运行凭据。
+
+一、项目绑定（由通用 CLI 承担）
+Python 3，无第三方依赖。Windows 可用 python 或 py -3。
+在每个项目目录单独初始化，不修改 CLI 源码：
+python3 raccoon.py --workspace <已获准的空间UUID> init --server https://YOUR_HOST --profile ProjectBuddy-test
+生成当前目录 raccoon.json；初始化不覆盖已有配置。账号须为目标空间成员；写操作需要 editor 或更高角色，以及批准的对应动作。
+
+配置 schema_version=1；必填字段：project_id（init生成的UUID）、profile（可读标签）、server（HTTPS源地址）、workspace_id（空间UUID）。
+项目配置不含秘密，可以纳入项目版本控制。开发、测试、生产分别初始化独立配置。
+默认只读取当前目录 ./raccoon.json；可用 --project <精确文件路径> 显式选择另一个项目配置。不搜索父目录。
+不存在环境变量或最近登录空间回退；FDE_CONFIG_DIR 和旧版全局 session.json 不参与选择。
+--workspace 是断言：必须等于配置空间，否则在读取凭据/发请求前拒绝。不能用此参数切换空间。
+更换项目要显式初始化并选择另一份配置、由本人独立授权；不要直接编辑 workspace 来复用授权。
+
+二、授权与操作
+python3 raccoon.py --version
+python3 raccoon.py capabilities
+python3 raccoon.py auth login --authorization <批准记录UUID>
+python3 raccoon.py auth whoami
+python3 raccoon.py doctor
+python3 raccoon.py list
+python3 raccoon.py get <Agent_ID>
+
+auth login 在浏览器显示账号、目标空间、确认码和有效期。本人核对后确认；不能模拟确认或使用管理员 SSH 代替。
+浏览器无法自动打开时加 --no-browser。批准有效窗口最长 7 天，Token 截止时间不超过批准截止时间，无自动续期；到期需重新申请、审批、本人确认。
+服务端 whoami 是身份与授权空间的权威依据。业务操作前 CLI 会检查 whoami 是否匹配固定配置。
+会话保存在 ~/.config/raccoonx/projects/<project_id>/session.json，目录0700/文件0600。
+会话同时绑定服务器、项目ID和空间；不寻找其他空间的token。auth logout 只撤销当前token。
+
+创建/配置/发布：
+python3 raccoon.py create --file examples/agent.json --dry-run
+python3 raccoon.py create --file examples/agent.json
+python3 raccoon.py get <Agent_ID>
+python3 raccoon.py configure <Agent_ID> --file examples/patch.json --revision <读取的revision> --dry-run
+python3 raccoon.py configure <Agent_ID> --file examples/patch.json --revision <读取的revision>
+python3 raccoon.py publish <Agent_ID> --revision <最新revision> --dry-run
+python3 raccoon.py publish <Agent_ID> --revision <最新revision> --note "v1"
+python3 raccoon.py get <Agent_ID>
+仅明确获准发布时执行实际 publish；验证 published=true、snapshot_id。dry-run 不调用模型，不代替实际运行测试。
+示例模型需替换为本空间已配置模型。Agent ID、资源ID和revision均来自当前空间，不能从别的Buddy直接复制。
+修改采用最小 agent_soul 补丁，数组整体替换。
+
+三、正式 HTTP 管理接口（现有路径、严格合同升级）
+基础地址：<server>/fde-cli/v1
+GET /capabilities 无认证，返回版本2.1.0、contract=raccoon-cli-v2、支持动作和能力标志。
+POST /auth/start {"workspace":"空间UUID","project_id":"项目UUID","authorization_id":"批准记录UUID","label":"项目标签"}
+必须显式目标，缺失/null/空值/未知目标400；不补默认空间。此严格规则也适用于旧路径的新授权。
+返回 {ok:true,data:{device_code,user_code,verification_uri,expires_in,interval}}。
+GET /auth/context?request=... 通过平台浏览器会话显示授权事务的固定空间。
+POST /auth/approve 通过本人浏览器会话、同源及CSRF确认；请求额外workspace不会改变事务目标。
+POST /auth/poll {"device_code":"..."} 待确认202；成功一次性返回token和grant字段，禁止记录响应凭据。
+所有 Bearer 请求还必须带 X-Raccoon-Project: <项目UUID>。
+GET /auth/me：Authorization: Bearer <个人token>，返回 account、workspace_id、workspace、expires_at、grant_id、actions。
+POST /auth/logout：撤销当前token。
+POST /agent：同上Bearer，JSON必须含workspace、project_id和action。
+动作：doctor/list/get/create/configure/publish；ID字段为id，创建为spec，配置为patch，版本为revision，预检为dry_run。
+示例 {"workspace":"空间UUID","project_id":"项目UUID","action":"get","id":"AgentUUID"}。
+成功统一 {"ok":true,"data":{...}}；失败 {"ok":false,"error":"..."}。
+HTTP：400参数/资源不可用，401缺失/过期/撤销token，403权限/授权空间不符，409revision冲突，429限流，500内部错误。
+资源范围错误含 resource_out_of_scope；不回传异空间资源名称或密钥。跨空间Agent ID仍统一“此工作空间内不存在该 Agent BETA”。
+退出码：0成功；1服务端操作失败；2客户端配置/连接/身份预检错误（JSON写stderr）；130用户中断；参数语法错误由argparse返回2。
+登录链接及确认码写stderr，不在stdout输出Token。--version输出版本字符串，其余成功输出JSON。
+
+四、资源归属校验范围
+创建/修改（含dry-run）、发布（含dry-run）及独立Agent/工作流Agent运行准备共用服务端归属校验。
+覆盖主模型/备用模型、显式模型凭据、工具provider/凭据、知识库及检索/重排/元数据模型、配置文件/技能文件和相关模型配置。
+模型provider名称等公共目录标识可以相同，但模型配置/凭据必须在当前空间解析。
+内置/插件工具声明仍经平台当前空间的原生目录解析；不会因为公共provider标识相同就当成私有跨空间资源。
+私有工具、文件、数据集和凭据无新设跨空间共享ACL，异空间引用拒绝。已复制到目标空间的配置使用目标空间新ID。
+已发布旧快照在运行准备时重新验证引用；资源删除/失效后不会仅因曾经发布而绕过校验。
+未新增自定义shell的OS安全边界；该类已有权限机制不等于项目凭据强隔离。
+
+五、防误用与强隔离边界
+同一账号可以分别持有SalesBuddy和ProjectBuddy授权，每份Token固定一个空间。
+配置或参数不能扩大服务端grant；同项目命令不会自动切换到另一空间的已存token。
+但是同一系统身份能读取另一合法token、编辑project_id或直接调用HTTP时，仍可使用那份授权。
+可编辑配置、目录、0600不是强隔离。本版不提供执行环境身份/凭据代理/自动续期。
+薄适配层直接固定 --project <配置路径> 调用此CLI即可，不需再造按workspace搜索token逻辑。
+
+六、并发、超时与尚未支持能力
+revision冲突返回409，重新get并审查差异，禁止盲目覆盖。
+没有稳定幂等键/operation ID，也没有创建/发布的事务查询接口。
+写请求超时后结果不确定：暂停重发，结合list/get、原Agent ID、revision/snapshot与管理员日志核查。
+仅凭名称不能唯一证明并发创建结果；不能把list/get当成严格幂等保证。
+暂不提供CLI创建空间/管理成员/配置模型凭据/Workflow/Agent Teams/知识库管理，也没有通用资源目录命令；批准的资源通过网页查看。
+CLI并非运行API：不含run/stop/usage接口，不承诺个人token可调用 /v1/chat-messages 或 /v1/workflows/run。
+后端运行须另申请应用/Agent运行凭据并确认该应用的API文档；发布成功不等于后端联调成功。
+本版未新增snapshot固定运行、回调、计费、限额、运行恢复或运行API合同。
+
+七、兼容与联合验收
+旧Token仍单空间有效；旧客户端的新登录若不携带workspace会收到400，应升级。无保留默认回退的新入口。
+新通用CLI不导入旧全局凭据，需要本人重新授权。
+自动化验收采用同一真实双空间账号的成员关系、隔离的测试授权命名空间和真实查询代码；浏览器身份模拟，未替用户发放生产Token。
+下一步联合验证：双方先确认以上接口与配置格式，再由本人在隔离项目授权，创建中性Agent、验证修改/发布、单独接通运行API。
+本包测试结果不替代上述真实浏览器和业务运行联调。

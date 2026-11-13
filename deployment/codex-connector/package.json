@@ -1,0 +1,12 @@
+{
+  "name": "raccoonx-local-codex-connector",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test *.test.mjs"
+  },
+  "dependencies": {
+    "@playwright/mcp": "0.0.84"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "workflow": {
+    "label": "工作流",
+    "meaning": "连接节点",
+    "file": "workflow.svg"
+  },
+  "chatflow": {
+    "label": "Chatflow",
+    "meaning": "双层对话",
+    "file": "chatflow.svg"
+  },
+  "chat": {
+    "label": "聊天助手",
+    "meaning": "微笑对话",
+    "file": "chat.svg"
+  },
+  "agent": {
+    "label": "Agent",
+    "meaning": "浣熊面罩",
+    "file": "agent.svg"
+  },
+  "writing": {
+    "label": "文本生成",
+    "meaning": "纸笔创作",
+    "file": "writing.svg"
+  },
+  "team": {
+    "label": "Agent Teams",
+    "meaning": "双浣熊协作",
+    "file": "team.svg"
+  },
+  "knowledge": {
+    "label": "知识库",
+    "meaning": "展开书页",
+    "file": "knowledge.svg"
+  },
+  "skill": {
+    "label": "Skills",
+    "meaning": "拼装能力",
+    "file": "skill.svg"
+  }
+}

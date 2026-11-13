@@ -1,0 +1,3 @@
+# Retain the deployed office/native-skill dependencies.
+FROM raccoon-harness:native-skills-20261106
+COPY worker.mjs server.mjs presentation.mjs /app/

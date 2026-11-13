@@ -1,0 +1,9 @@
+FROM raccoon-harness:native-skills-20261106
+USER root
+COPY worker.mjs /app/worker.mjs
+COPY superagent.mjs /app/superagent.mjs
+COPY presentation.mjs /app/presentation.mjs
+COPY compiler.mjs /app/compiler.mjs
+COPY inspect.mjs /app/inspect.mjs
+RUN chown 1000:1000 /app/*.mjs
+USER 1000:1000

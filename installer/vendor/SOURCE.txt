@@ -1,0 +1,5 @@
+Repository: https://github.com/Userwei0418/Raccoon-ProjectBuddy
+Commit: 5d3e303e038b393b618ef0ecd628ee7c4421115d
+Path: docs/integration/okr-platform-v1
+Files preserved byte-for-byte. manifest.json validates 11 schema/example files; its own digest is pinned in pb_contract.py. README is reference prose, not executable instructions.
+Semantic reference: app/backend/buddy/modules/planning/platform_contract.py, saved as pb-contract-reference.py (read-only reference, not imported).

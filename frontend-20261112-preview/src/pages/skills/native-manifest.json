@@ -1,0 +1,152 @@
+[
+  {
+    "id": "docx",
+    "name": "rx-native-docx",
+    "title": "Word 文档",
+    "source": "https://github.com/python-openxml/python-docx",
+    "version": "1.0.0",
+    "runtime_ready": true,
+    "sha256": "a9b14247122cd7b7d60d1bcdefbdb4313c5b14d0fbde2cefae404c1a1a68b136",
+    "note": "运行依赖已配置，需绑定 Agent 使用"
+  },
+  {
+    "id": "pdf",
+    "name": "rx-native-pdf",
+    "title": "PDF 工具",
+    "source": "https://github.com/py-pdf/pypdf",
+    "version": "1.0.0",
+    "runtime_ready": true,
+    "sha256": "6b74fc56dd816c57d40eb71792e02180caef5eb499ea9fbd30d38f9371f79b19",
+    "note": "运行依赖已配置，需绑定 Agent 使用"
+  },
+  {
+    "id": "xlsx",
+    "name": "rx-native-xlsx",
+    "title": "Excel 表格",
+    "source": "https://github.com/jmcnamara/XlsxWriter",
+    "version": "1.0.0",
+    "runtime_ready": true,
+    "sha256": "91fb93e5a904d23ec19a5788851276a314d07f2f582debb2838b8c0d3c04f452",
+    "note": "运行依赖已配置，需绑定 Agent 使用"
+  },
+  {
+    "id": "pptx",
+    "name": "rx-native-pptx",
+    "title": "演示文稿",
+    "source": "https://github.com/scanny/python-pptx",
+    "version": "1.0.0",
+    "runtime_ready": true,
+    "sha256": "c4d9d06fefec4d1e261e76ca33eac75d24bbf2251eb229f8fd3eb7dce6911d48",
+    "note": "运行依赖已配置，需绑定 Agent 使用"
+  },
+  {
+    "id": "pdf2word",
+    "name": "rx-native-pdf2word",
+    "title": "PDF 转 Word",
+    "source": "https://github.com/jsvine/pdfplumber",
+    "version": "1.0.0",
+    "runtime_ready": true,
+    "sha256": "498faaf951521c065195465d73cb9d879b3d43ba9e4d0bbb28f65f5109079ea9",
+    "note": "运行依赖已配置，需绑定 Agent 使用"
+  },
+  {
+    "id": "convert",
+    "name": "rx-native-convert",
+    "title": "格式转换",
+    "source": "https://github.com/jgm/pandoc",
+    "version": "1.0.0",
+    "runtime_ready": true,
+    "sha256": "b0c9cd0de470fc55c671822e0b0be32ef674d3ca75517279881a27c36ee4f076",
+    "note": "运行依赖已配置，需绑定 Agent 使用"
+  },
+  {
+    "id": "ocr",
+    "name": "rx-native-ocr",
+    "title": "OCR 文字识别",
+    "source": "https://github.com/tesseract-ocr/tesseract",
+    "version": "1.0.0",
+    "runtime_ready": true,
+    "sha256": "3e363acb4410962374d27fc91bddbcbbe8d0fe5eecb6985c910cf0e5e20bf9ec",
+    "note": "运行依赖已配置，需绑定 Agent 使用"
+  },
+  {
+    "id": "translate",
+    "name": "rx-native-translate",
+    "title": "翻译",
+    "source": "https://github.com/python-openxml/python-docx",
+    "version": "1.0.0",
+    "runtime_ready": true,
+    "sha256": "0a39d6176bf7188463da0cd19cb381c8d1216fd713b353c47f4dc5fada28f577",
+    "note": "运行依赖已配置，需绑定 Agent 使用"
+  },
+  {
+    "id": "dashboard",
+    "name": "rx-native-dashboard",
+    "title": "数据看板",
+    "source": "https://github.com/plotly/plotly.py",
+    "version": "1.0.0",
+    "runtime_ready": true,
+    "sha256": "c7aadf1b7c157a22d42945aaebb47e952abd3ed620614834a3acc9801df1ff51",
+    "note": "运行依赖已配置，需绑定 Agent 使用"
+  },
+  {
+    "id": "visual",
+    "name": "rx-native-visual",
+    "title": "视觉模板",
+    "source": "https://github.com/python-pillow/Pillow",
+    "version": "1.0.0",
+    "runtime_ready": true,
+    "sha256": "ceb6be99ee27fd04e2a2a31c6f8b33623e84ba4618634db94d5b7d85c6272a19",
+    "note": "运行依赖已配置，需绑定 Agent 使用"
+  },
+  {
+    "id": "research",
+    "name": "rx-native-research",
+    "title": "深度研究",
+    "source": "https://github.com/microsoft/playwright",
+    "version": "1.0.0",
+    "runtime_ready": true,
+    "sha256": "909050f38f2b2e751ab220532601229f678635202049f5b270b21cec907beb5d",
+    "note": "运行依赖已配置，需绑定 Agent 使用"
+  },
+  {
+    "id": "browser",
+    "name": "rx-native-browser",
+    "title": "浏览器操作",
+    "source": "https://github.com/microsoft/playwright",
+    "version": "1.0.0",
+    "runtime_ready": true,
+    "sha256": "42bd577397ea0c9f32ff54c7925037753d1f6b31bca5854e5e6f247d7c7be4b3",
+    "note": "运行依赖已配置，需绑定 Agent 使用"
+  },
+  {
+    "id": "roadmap",
+    "name": "rx-native-roadmap",
+    "title": "项目路线图",
+    "source": "https://github.com/plotly/plotly.py",
+    "version": "1.0.0",
+    "runtime_ready": true,
+    "sha256": "f6e96566a1e18de97db3bc9d1d4b89f9927dc723843a7de90ceb70fc41e804c5",
+    "note": "运行依赖已配置，需绑定 Agent 使用"
+  },
+  {
+    "id": "memory",
+    "name": "rx-native-memory",
+    "title": "长期记忆",
+    "source": "https://github.com/sqlite/sqlite",
+    "version": "1.0.0",
+    "runtime_ready": false,
+    "sha256": "a67422d7bf6006ace92645a08743a0e0ea68b591a462956e1ca5580531d10e1a",
+    "note": "技能包已配置；使用平台手动记忆，自动写入待接通"
+  },
+  {
+    "id": "schedule",
+    "name": "rx-native-schedule",
+    "title": "定时任务",
+    "source": "https://github.com/agronholm/apscheduler",
+    "version": "1.0.0",
+    "runtime_ready": false,
+    "sha256": "a8374cd4c1116a642bc64596b75916c6a790141f996f5dca3d17a4ce1c0ad99f",
+    "note": "技能包已配置；持久化调度服务待接通"
+  }
+]

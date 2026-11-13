@@ -1,0 +1,27 @@
+{
+  "product": "Raccoon X",
+  "version": "2026.10.28",
+  "base_version": "Dify 1.17.0 customized",
+  "architecture": "linux/amd64",
+  "installation": "online-fresh-instance",
+  "includes_production_data": false,
+  "includes_model_credentials": false,
+  "business_output_validation": "disabled as in current customized code",
+  "license": "LICENSE-Dify.txt",
+  "features": [
+    "Agent Teams",
+    "Raccoon avatar library",
+    "Original application badges",
+    "Grouped navigation",
+    "DOCX sandbox fix",
+    "CLI approval center",
+    "Cross-workspace reference validation",
+    "Signed file delivery",
+    "OKR runtime (test-stage, no applications or credentials preloaded)"
+  ],
+  "cli_version": "2.1.0",
+  "okr_runtime": "0.3.0-test / empty bindings",
+  "source_api_image": "local/dify-api:cli-approval-2.1.0-20261023-001841",
+  "source_web_image": "local/dify-web:raccoon-badges-20261017",
+  "deployment_credentials_included": false
+}

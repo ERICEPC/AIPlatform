@@ -1,0 +1,14 @@
+FROM raccoon-harness:0.2.2-rc.1
+USER root
+COPY compiler.mjs /app/compiler.mjs
+COPY worker.mjs /app/worker.mjs
+COPY superagent.mjs /app/superagent.mjs
+COPY presentation.mjs /app/presentation.mjs
+COPY inspect.mjs /app/inspect.mjs
+COPY bridge.mjs /app/bridge.mjs
+COPY dsh-dify-compat.mjs /app/dsh-dify-compat.mjs
+COPY device-bridge.mjs /app/device-bridge.mjs
+COPY agent-manager.mjs /app/agent-manager.mjs
+COPY platform-ca.pem /app/platform-ca.pem
+RUN chown 1000:1000 /app/*.mjs
+USER 1000:1000

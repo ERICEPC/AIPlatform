@@ -1,0 +1,4 @@
+#!/bin/sh
+# A tool wait timeout does not stop the process. Bound package-manager execution itself.
+export PIP_NO_INPUT=1 PIP_DISABLE_PIP_VERSION_CHECK=1
+exec timeout --signal=TERM --kill-after=5s 120s /usr/local/bin/python -u -m pip --timeout 15 --retries 1 "$@"

@@ -1,0 +1,19 @@
+/* One conversational type scale for every group and both member kinds. */
+.collab-message-body { font-size:15px; line-height:1.75; color:var(--ink); min-width:0; }
+.collab-message-body .assistant-reply { font-size:inherit; line-height:inherit; }
+.collab-message-body .assistant-reply p { margin:0 0 12px; }
+.collab-message-body .assistant-reply :is(h1,h2,h3,h4,h5,h6) { font-size:16px; line-height:1.6; font-weight:600; margin:18px 0 8px; padding:0; border:0; letter-spacing:normal; }
+.collab-message-body .assistant-reply :is(ul,ol) { margin:8px 0 12px; padding-left:24px; }
+.collab-message-body .assistant-reply li { margin:5px 0; padding-left:3px; }
+.collab-message-body .assistant-reply li::marker { color:var(--ink-2); font-weight:400; }
+.collab-message-body .assistant-reply li p { margin:4px 0; }
+.collab-message-body .assistant-reply li :is(ul,ol) { margin:4px 0; }
+.collab-message-body .assistant-reply strong { font-weight:600; }
+.collab-message-body .assistant-reply blockquote { margin:12px 0; padding:8px 12px; }
+.collab-message-body .assistant-reply pre { margin:12px 0; padding:12px; background:var(--bg); }
+.collab-message-body .assistant-reply hr { margin:16px 0; }
+.collab-message-body .assistant-reply a { color:var(--volt-text); }
+.collab-message-body .reply-table-scroll { margin:12px 0; }
+.collab-message-body .assistant-reply :is(th,td) { padding:8px 12px; }
+.collab-message-body .assistant-reply > :first-child { margin-top:0; }
+.collab-message-body .assistant-reply > :last-child { margin-bottom:0; }

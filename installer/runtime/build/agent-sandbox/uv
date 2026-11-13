@@ -1,0 +1,10 @@
+#!/bin/sh
+# uv atomically renames temporary downloads into its cache: keep both on one filesystem.
+UV_CACHE_DIR="${UV_CACHE_DIR:-$HOME/.cache/uv}"
+mkdir -p "$UV_CACHE_DIR/tmp" || exit 1
+export UV_CACHE_DIR
+TMPDIR="$UV_CACHE_DIR/tmp"
+TMP="$TMPDIR"
+TEMP="$TMPDIR"
+export TMPDIR TMP TEMP
+exec /usr/local/bin/uv-real "$@"

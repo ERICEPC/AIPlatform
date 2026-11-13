@@ -1,0 +1,11 @@
+{
+  "files": {
+    "instructions.txt": "82df658c3c536de33195aaa9f24de91660b039103fe1c67fc055a69e51963619",
+    "model-output.schema.json": "c5466f44854b92ee5ef313587b06a2e22bdea8a5bef0efbd751d570478b9cff9",
+    "request.schema.json": "3e8d9f63b077a2dda714d20b566b217fbf4a283fcccce25ceb6106dc23a6fa97"
+  },
+  "pb_source_commit": "4cbe7d583567f754862bf1139255280eff6ded12",
+  "schema_version": "pb.recommendation.v1",
+  "source_format": "recommendation-okr-evidence-v1",
+  "task_kind": "recommendation.generate"
+}

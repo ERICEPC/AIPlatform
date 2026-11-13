@@ -1,0 +1,6 @@
+import { useState } from 'react'
+import { Dialog } from '@/components/ui/dialog'
+import { WORKSPACE_NAV,ADMIN_NAV,canSeeAdmin } from './shell'
+import { useSession } from '@/lib/session'
+import { isDemoPath } from '@/lib/feature-modes'
+export function PageSearch({open,onClose,go}:{open:boolean;onClose:()=>void;go:(p:string)=>void}){const [q,setQ]=useState('');const {perms}=useSession();const items=[...WORKSPACE_NAV.flatMap(g=>g.items),...ADMIN_NAV.flatMap(g=>g.items).filter(i=>canSeeAdmin(i.path,perms))].filter(i=>i.label.toLowerCase().includes(q.toLowerCase()));return <Dialog open={open} onOpenChange={v=>!v&&onClose()} title="查找功能页面"><input autoFocus aria-label="查找功能" className="mb-4 w-full rounded-md border border-line px-3 py-2" placeholder="输入功能名称…" value={q} onChange={e=>setQ(e.target.value)}/><div className="max-h-96 space-y-1 overflow-auto">{items.map(i=><button key={i.path} className="flex w-full items-center justify-between rounded-md px-3 py-2 text-left hover:bg-hover" onClick={()=>{go(i.path);onClose()}}>{i.label}<span className={`text-xs ${isDemoPath(i.path)?'text-amber':'text-ink-3'}`}>{isDemoPath(i.path)?(i.path==='releases'?'演示':'待上线'):'真实服务'}</span></button>)}</div></Dialog>}

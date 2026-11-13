@@ -1,0 +1,94 @@
+/* Raccoon X published applications — Enterprise Blue visual language (v4, 2026-11-08: lime green replaced with blue). */
+@font-face { font-family: 'RX Geist'; src: url('/new-ui/geist-latin-wght-normal.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+html.rx-webapp[data-theme] {
+  --rx-ink: #e8edf5; --rx-muted: #a3b0c2; --rx-line: rgb(255 255 255 / .1);
+  --rx-glass: rgb(255 255 255 / .045); --rx-panel: rgb(14 21 36 / .65);
+  --rx-agent-avatar: url('/raccoon-emoji-v1/002-office.webp');
+  --color-text-primary: #e8edf5; --color-text-secondary: #a3b0c2;
+  --color-text-tertiary: #8592a6; --color-text-accent: #8fb4ff;
+  --color-state-accent-solid: #2563eb; --color-state-accent-active: rgb(37 99 235 / .12);
+  --color-components-button-primary-bg: #2563eb; --color-components-button-primary-text: #ffffff;
+  --color-components-button-secondary-bg: rgb(255 255 255 / .06);
+  --color-components-button-secondary-accent-text: #e8edf5;
+  --color-chatbot-bg: transparent; --color-chat-bubble-bg: transparent;
+  --color-background-default-burn: transparent;
+  --color-components-chat-input-border: rgb(255 255 255 / .16);
+  --color-components-panel-bg-blur: rgb(17 24 39 / .9);
+  --color-background-gradient-bg-fill-chat-bubble-bg-3: rgb(37 99 235 / .1);
+  --color-chat-input-mask: linear-gradient(180deg, transparent, rgb(7 11 20 / .85));
+}
+html.rx-webapp body {
+  background: radial-gradient(ellipse at 78% 24%, rgb(37 99 235 / .13), transparent 50%),
+    radial-gradient(ellipse at 15% 95%, rgb(56 189 248 / .14), transparent 52%), #070b14 !important;
+  color: var(--rx-ink); font-family: 'RX Geist', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+}
+.rx-webapp body::before { content: ''; position: fixed; inset: 0; pointer-events: none; background-image: radial-gradient(rgb(255 255 255 / .07) .7px, transparent 1px); background-size: 22px 22px; }
+.rx-webapp .rx-chat-shell { background: transparent !important; padding: 8px; gap: 8px; }
+.rx-webapp .rx-chat-sidebar { width: 248px; padding: 8px !important; border: 1px solid var(--rx-line); border-radius: 24px; background: var(--rx-glass); box-shadow: inset 0 1px 0 rgb(255 255 255 / .07); }
+.rx-webapp .rx-chat-sidebar > div > div:first-child { padding: 14px 8px 20px; border-bottom: 1px solid var(--rx-line); }
+.rx-webapp .rx-chat-sidebar img.size-full { object-fit: contain; padding: 2px; }
+.rx-webapp .rx-chat-sidebar span:has(> img.size-full) { border-radius: 50%; background: rgb(255 255 255 / .05) !important; border: 1px solid rgb(37 99 235 / .6); }
+.rx-webapp .rx-chat-sidebar .bg-state-accent-active { border: 1px solid rgb(37 99 235 / .45); border-radius: 12px; }
+.rx-webapp .rx-chat-panel { border: 1px solid var(--rx-line) !important; border-radius: 24px !important; background: rgb(255 255 255 / .018) !important; box-shadow: inset 0 1px 0 rgb(255 255 255 / .05); }
+.rx-webapp .rx-chat-panel > div:first-child { border-bottom: 1px solid var(--rx-line); }
+.rx-webapp .rx-chat-panel > .bg-chatbot-bg { background: transparent !important; }
+.rx-webapp .rx-chat-panel > div:first-child { min-height: 58px; }
+.rx-webapp [data-testid='chat-container'] { padding-top: 24px; }
+.rx-webapp .rx-answer-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--rx-agent-avatar) center / contain no-repeat, rgb(255 255 255 / .04); border: 1px solid var(--rx-line); }
+.rx-webapp .rx-answer-avatar > * { visibility: hidden; }
+.rx-webapp [data-testid='chat-answer-container'] { margin-left: 14px; }
+.rx-webapp [data-testid='chat-answer-container-inner'] { padding-right: 12px; }
+.rx-webapp [data-testid='markdown-body'] { font-family: inherit !important; font-size: 15px; line-height: 1.85; letter-spacing: .01em; }
+.rx-webapp [data-testid='markdown-body'] p { margin: .65em 0; }
+.rx-webapp [data-testid='question-content'] { border: 1px solid rgb(37 99 235 / .18); border-radius: 18px 18px 5px 18px; background: rgb(37 99 235 / .09) !important; }
+.rx-webapp [data-testid='chat-footer'] { padding-bottom: 20px; }
+.rx-webapp [data-testid='chat-footer'] .pointer-events-auto { border-radius: 20px; background: var(--rx-panel) !important; backdrop-filter: blur(22px); box-shadow: 0 10px 32px rgb(0 0 0 / .2), inset 0 1px 0 rgb(255 255 255 / .05); padding: 10px; }
+.rx-webapp [data-testid='chat-footer'] .pointer-events-auto:focus-within { border-color: rgb(37 99 235 / .6); }
+.rx-webapp textarea { font-family: inherit !important; font-size: 14px !important; }
+.rx-webapp button:is([aria-label='发送'],[aria-label='Send']) { background: #2563eb !important; color: #ffffff !important; border-radius: 50% !important; box-shadow: none !important; }
+.rx-webapp button:is([aria-label='发送'],[aria-label='Send']):disabled { opacity: .4; }
+.rx-webapp :focus-visible { outline: 2px solid #2563eb; outline-offset: 3px; }
+.rx-webapp ::selection { background: #2563eb; color: #ffffff; }
+html.rx-webapp[data-theme='light'] { --rx-ink: #0f172a; --rx-muted: #475569; --rx-line: rgb(15 23 42 / .12); --rx-glass: rgb(255 255 255 / .55); --rx-panel: rgb(255 255 255 / .88); --color-text-primary: #0f172a; --color-text-secondary: #475569; --color-text-tertiary: #64748b; --color-text-accent: #1d4ed8; --color-components-button-secondary-accent-text: #0f172a; --color-chat-input-mask: linear-gradient(180deg,transparent,rgb(243 245 249 / .85)); }
+.rx-webapp[data-theme='light'] body { background: radial-gradient(ellipse at 80% 20%,rgb(37 99 235 / .2),transparent 55%), radial-gradient(ellipse at 15% 95%,rgb(56 189 248 / .15),transparent 52%),#f3f5f9 !important; }
+@media(max-width: 767px) { .rx-webapp .rx-chat-shell { padding: 0; gap: 0; } .rx-webapp .rx-chat-panel { border-radius: 0 !important; } .rx-webapp [data-testid='chat-container'] { padding-top: 12px; } .rx-webapp [data-testid='chat-answer-container'] { margin-left: 8px; } .rx-webapp [data-testid='chat-footer'] { padding-bottom: max(12px,env(safe-area-inset-bottom)); } }
+/* Preserve the application's collapse state and native control behavior. */
+.rx-webapp .rx-chat-sidebar.w-0 { width: 0; padding: 0 !important; border-width: 0; overflow: hidden; }
+.rx-webapp textarea { background: transparent !important; box-shadow: none !important; }
+.rx-webapp .question-default-user-icon rect { fill: #1e3a8a; }
+.rx-webapp .question-default-user-icon circle, .rx-webapp .question-default-user-icon ellipse { fill: #bfdbfe; }
+.rx-webapp button:is([aria-label='发送'],[aria-label='Send']) > span { display: none; }
+.rx-webapp button:is([aria-label='发送'],[aria-label='Send'])::after { content: '↑'; font: 22px/1 'RX Geist', sans-serif; }
+.rx-webapp .rx-chat-sidebar button:has(.i-ri-edit-box-line) { background: #2563eb !important; color: #ffffff !important; border-radius: 999px; min-height: 36px; }
+html.rx-webapp body [data-testid='chat-footer'] textarea { background: transparent !important; border: 0 !important; border-radius: 0 !important; }
+/* Message presentation: real metadata, readable results and existing artifacts. */
+.rx-webapp [data-testid='chat-container'] [class*='max-w-[768px]'],
+.rx-webapp [data-testid='chat-footer'] > div { max-width: 960px !important; }
+.rx-webapp [data-testid='question-content'] { padding: 12px 20px; border-radius: 26px 26px 7px 26px; box-shadow: 0 0 24px rgb(37 99 235 / .1); }
+.rx-webapp .rx-message-heading { display: flex; align-items: center; min-height: 40px; margin-bottom: 8px; color: var(--rx-muted); font-size: 14px; font-weight: 500; }
+.rx-webapp [data-testid='chat-answer-container-inner'] > .bg-chat-bubble-bg { display: block; padding: 0 0 16px !important; }
+.rx-webapp .rx-structured-source { display: none !important; }
+.rx-webapp .rx-structured-reply { font-size: 15px; line-height: 1.85; color: var(--rx-ink); }
+.rx-webapp .rx-summary { margin: 10px 0 22px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.rx-webapp .rx-suggestions { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,280px),1fr)); gap: 12px; }
+.rx-webapp .rx-suggestion { padding: 20px; border: 1px solid var(--rx-line); border-radius: 20px; background: var(--rx-glass); box-shadow: inset 0 1px 0 rgb(255 255 255 / .06); }
+.rx-webapp .rx-suggestion h3 { margin: 0 0 10px; color: var(--color-text-accent); font-size: 15px; font-weight: 600; }
+.rx-webapp .rx-evidence { margin: 0 0 8px; color: var(--rx-muted); font-size: 13px; }
+.rx-webapp .rx-action { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.rx-webapp .rx-source-details { margin-top: 14px; color: var(--rx-muted); font-size: 12px; }
+.rx-webapp .rx-source-details summary { cursor: pointer; width: fit-content; }
+.rx-webapp .rx-source-details pre { padding: 12px; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid var(--rx-line); border-radius: 12px; }
+.rx-webapp [data-testid='agent-roster-response-content'] > div:has(> button[aria-expanded]) { width: 100%; padding: 12px 16px; margin-bottom: 14px; border: 1px solid var(--rx-line); border-radius: 18px; background: var(--rx-glass); }
+.rx-webapp [data-testid='agent-roster-response-content'] > div > button[aria-expanded] { min-height: 28px; color: var(--rx-muted); font-size: 13px; }
+.rx-webapp [data-testid='workflow-process-item'] { border: 1px solid var(--rx-line); border-radius: 18px; background: var(--rx-glass); padding: 16px; }
+.rx-webapp a.rx-file-download { display: inline-flex; align-items: center; gap: 12px; max-width: 100%; padding: 16px 20px; margin: 12px 0; border: 1px solid var(--rx-line); border-radius: 20px; background: var(--rx-glass); color: var(--rx-ink); text-decoration: none; overflow-wrap: anywhere; }
+.rx-webapp a.rx-file-download::before { content: '↓'; display: grid; flex: 0 0 38px; place-items: center; height: 44px; border-radius: 10px; background: rgb(37 99 235 / .14); color: var(--color-text-accent); font-size: 24px; }
+.rx-webapp a.rx-file-download:hover { border-color: rgb(37 99 235 / .5); }
+/* Compact outgoing messages; remove the anonymous placeholder avatar. */
+html.rx-webapp [data-testid='chat-container'] .size-10:has(.question-default-user-icon) { display: none; }
+html.rx-webapp [data-testid='chat-container'] .group:has(> [data-testid='question-content']) { margin-right: 0; max-width: 88%; padding-left: 0; }
+html.rx-webapp [data-testid='question-content'] { width: auto; min-width: 0; padding: 10px 18px !important; border-radius: 20px !important; border: 1px solid rgb(37 99 235 / .22); background: rgb(37 99 235 / .07) !important; box-shadow: none !important; }
+html.rx-webapp [data-testid='question-content'] [data-testid='markdown-body'] { font-size: 15px; line-height: 1.55; }
+html.rx-webapp [data-testid='question-content'] [data-testid='markdown-body'] p { margin: 0 !important; }
+html.rx-webapp [data-testid='question-content'] [data-testid='markdown-body'] p + p { margin-top: 8px !important; }

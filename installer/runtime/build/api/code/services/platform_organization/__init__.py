@@ -1,0 +1,1 @@
+"""Organization directory read model."""

@@ -1,0 +1,2 @@
+FROM raccoon-harness:0.2.2-rc.1
+COPY server.mjs /app/server.mjs

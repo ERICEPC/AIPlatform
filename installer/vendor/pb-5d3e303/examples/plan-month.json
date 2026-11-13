@@ -1,0 +1,305 @@
+{
+  "authorized": true,
+  "current_snapshot": {
+    "constraints": [
+      "仅生成待人工确认的候选；不能自动改正式状态。"
+    ],
+    "cycle_ref": {
+      "content_hash": "f278e3dc26a85f35d4bd413f91c21eb8f58184eba5ac8ea5272f3dfd2bb25b35",
+      "id": "fixture-cycle",
+      "kind": "cycle",
+      "version": 2
+    },
+    "kr_ref": {
+      "content_hash": "97d2130d9c5eb1558fa3881bcf78e5aa711826ea23b2f90a5c1a109beb37e15c",
+      "id": "fixture-kr",
+      "kind": "kr",
+      "version": 2
+    },
+    "members": [
+      {
+        "available_minutes": 240,
+        "can_own": true,
+        "can_verify": false,
+        "id": "member-a"
+      },
+      {
+        "available_minutes": null,
+        "can_own": false,
+        "can_verify": true,
+        "id": "member-b"
+      }
+    ],
+    "parent_confirmed": true,
+    "parent_ref": {
+      "content_hash": "f278e3dc26a85f35d4bd413f91c21eb8f58184eba5ac8ea5272f3dfd2bb25b35",
+      "id": "fixture-cycle",
+      "kind": "cycle",
+      "version": 2
+    },
+    "parent_window": {
+      "ends_on": "2026-12-31",
+      "level": "quarter",
+      "period_key": "2026Q4",
+      "starts_on": "2026-10-01"
+    },
+    "projects": [
+      {
+        "id": "project-a",
+        "kr_id": "fixture-kr"
+      }
+    ],
+    "sources": [
+      {
+        "ref": {
+          "content_hash": "f278e3dc26a85f35d4bd413f91c21eb8f58184eba5ac8ea5272f3dfd2bb25b35",
+          "id": "fixture-cycle",
+          "kind": "cycle",
+          "version": 2
+        },
+        "text": "合成Q4基线；仅供合同测试。",
+        "title": "示例季度"
+      },
+      {
+        "ref": {
+          "content_hash": "97d2130d9c5eb1558fa3881bcf78e5aa711826ea23b2f90a5c1a109beb37e15c",
+          "id": "fixture-kr",
+          "kind": "kr",
+          "version": 2
+        },
+        "text": "合成KR；业务目标值尚待另外定义，不能用任务数量代替。",
+        "title": "形成可追溯交付记录"
+      },
+      {
+        "ref": {
+          "content_hash": "b9d09db1373c7c3519c10237c989978ca9e41225a580c618bc961a485f0db1d4",
+          "id": "fixture-month",
+          "kind": "month",
+          "version": 2
+        },
+        "text": "形成可核对的交付归档，保留证据。",
+        "title": "示例11月计划"
+      },
+      {
+        "ref": {
+          "content_hash": "d337d46723fa68dd4e8749ff5b7c8e4280fa81827e38bb0de329954ef461dff9",
+          "id": "fixture-week",
+          "kind": "week",
+          "version": 2
+        },
+        "text": "完成一项交付材料归档并独立核对。",
+        "title": "示例第45周计划"
+      },
+      {
+        "ref": {
+          "content_hash": "45a443319f5a7683d57bacb629a1089c4cb7e06e0a9ae6bcb5910856bfb9ec29",
+          "id": "fixture-evidence",
+          "kind": "evidence",
+          "version": 2
+        },
+        "text": "合成执行记录：归档完成，尚未提供业务收益度量。",
+        "title": "归档执行证据"
+      }
+    ],
+    "target_window": {
+      "ends_on": "2026-11-30",
+      "level": "month",
+      "period_key": "2026-11",
+      "starts_on": "2026-11-01"
+    },
+    "timezone": "Asia/Shanghai"
+  },
+  "expected": "draft_needs_review",
+  "fixture_kind": "synthetic_contract_only",
+  "model_output": {
+    "result": {
+      "candidate": {
+        "candidate_id": "candidate-1",
+        "expected_result": "形成可追溯且待负责人确认的归档材料。",
+        "owner_id": "member-a",
+        "parent_ref": {
+          "content_hash": "f278e3dc26a85f35d4bd413f91c21eb8f58184eba5ac8ea5272f3dfd2bb25b35",
+          "id": "fixture-cycle",
+          "kind": "cycle",
+          "version": 2
+        },
+        "reason": "合成父计划要求保留可核对的产物。",
+        "source_refs": [
+          {
+            "content_hash": "f278e3dc26a85f35d4bd413f91c21eb8f58184eba5ac8ea5272f3dfd2bb25b35",
+            "id": "fixture-cycle",
+            "kind": "cycle",
+            "version": 2
+          },
+          {
+            "content_hash": "97d2130d9c5eb1558fa3881bcf78e5aa711826ea23b2f90a5c1a109beb37e15c",
+            "id": "fixture-kr",
+            "kind": "kr",
+            "version": 2
+          }
+        ],
+        "title": "形成交付归档"
+      },
+      "result_kind": "draft",
+      "task_kind": "plan.decompose",
+      "warnings": []
+    },
+    "schema_version": "pb.okr.v1"
+  },
+  "request": {
+    "application": {
+      "application_id": "fixture-application",
+      "snapshot_id": "fixture-snapshot-v1",
+      "workspace_id": "fixture-workspace"
+    },
+    "input": {
+      "constraints": [
+        "仅生成待人工确认的候选；不能自动改正式状态。"
+      ],
+      "cycle_ref": {
+        "content_hash": "f278e3dc26a85f35d4bd413f91c21eb8f58184eba5ac8ea5272f3dfd2bb25b35",
+        "id": "fixture-cycle",
+        "kind": "cycle",
+        "version": 2
+      },
+      "kr_ref": {
+        "content_hash": "97d2130d9c5eb1558fa3881bcf78e5aa711826ea23b2f90a5c1a109beb37e15c",
+        "id": "fixture-kr",
+        "kind": "kr",
+        "version": 2
+      },
+      "members": [
+        {
+          "available_minutes": 240,
+          "can_own": true,
+          "can_verify": false,
+          "id": "member-a"
+        },
+        {
+          "available_minutes": null,
+          "can_own": false,
+          "can_verify": true,
+          "id": "member-b"
+        }
+      ],
+      "parent_confirmed": true,
+      "parent_ref": {
+        "content_hash": "f278e3dc26a85f35d4bd413f91c21eb8f58184eba5ac8ea5272f3dfd2bb25b35",
+        "id": "fixture-cycle",
+        "kind": "cycle",
+        "version": 2
+      },
+      "parent_window": {
+        "ends_on": "2026-12-31",
+        "level": "quarter",
+        "period_key": "2026Q4",
+        "starts_on": "2026-10-01"
+      },
+      "projects": [
+        {
+          "id": "project-a",
+          "kr_id": "fixture-kr"
+        }
+      ],
+      "sources": [
+        {
+          "ref": {
+            "content_hash": "f278e3dc26a85f35d4bd413f91c21eb8f58184eba5ac8ea5272f3dfd2bb25b35",
+            "id": "fixture-cycle",
+            "kind": "cycle",
+            "version": 2
+          },
+          "text": "合成Q4基线；仅供合同测试。",
+          "title": "示例季度"
+        },
+        {
+          "ref": {
+            "content_hash": "97d2130d9c5eb1558fa3881bcf78e5aa711826ea23b2f90a5c1a109beb37e15c",
+            "id": "fixture-kr",
+            "kind": "kr",
+            "version": 2
+          },
+          "text": "合成KR；业务目标值尚待另外定义，不能用任务数量代替。",
+          "title": "形成可追溯交付记录"
+        },
+        {
+          "ref": {
+            "content_hash": "b9d09db1373c7c3519c10237c989978ca9e41225a580c618bc961a485f0db1d4",
+            "id": "fixture-month",
+            "kind": "month",
+            "version": 2
+          },
+          "text": "形成可核对的交付归档，保留证据。",
+          "title": "示例11月计划"
+        },
+        {
+          "ref": {
+            "content_hash": "d337d46723fa68dd4e8749ff5b7c8e4280fa81827e38bb0de329954ef461dff9",
+            "id": "fixture-week",
+            "kind": "week",
+            "version": 2
+          },
+          "text": "完成一项交付材料归档并独立核对。",
+          "title": "示例第45周计划"
+        },
+        {
+          "ref": {
+            "content_hash": "45a443319f5a7683d57bacb629a1089c4cb7e06e0a9ae6bcb5910856bfb9ec29",
+            "id": "fixture-evidence",
+            "kind": "evidence",
+            "version": 2
+          },
+          "text": "合成执行记录：归档完成，尚未提供业务收益度量。",
+          "title": "归档执行证据"
+        }
+      ],
+      "target_window": {
+        "ends_on": "2026-11-30",
+        "level": "month",
+        "period_key": "2026-11",
+        "starts_on": "2026-11-01"
+      },
+      "timezone": "Asia/Shanghai"
+    },
+    "input_snapshot_hash": "74a2e14e258f603dd1fc5d2161dd25a1775edb12bbb28e54cfca06e6aaab5cc3",
+    "intent_id": "fixture-plan-month",
+    "schema_version": "pb.okr.v1",
+    "scope": {
+      "actor_id": "synthetic-leader",
+      "team_id": "synthetic-team",
+      "tenant_id": "synthetic-tenant"
+    },
+    "task_kind": "plan.decompose"
+  },
+  "runtime_receipt": {
+    "application": {
+      "application_id": "fixture-application",
+      "snapshot_id": "fixture-snapshot-v1",
+      "workspace_id": "fixture-workspace"
+    },
+    "attempts": [
+      {
+        "id": "fixture-attempt-1",
+        "model": null,
+        "state": "succeeded",
+        "usage": {
+          "completeness": "unknown",
+          "input_tokens": null,
+          "output_tokens": null
+        }
+      }
+    ],
+    "attempts_complete": false,
+    "input_snapshot_hash": "74a2e14e258f603dd1fc5d2161dd25a1775edb12bbb28e54cfca06e6aaab5cc3",
+    "intent_id": "fixture-plan-month",
+    "run_id": "fixture-run-plan-month",
+    "schema_version": "pb.okr.v1",
+    "scope": {
+      "actor_id": "synthetic-leader",
+      "team_id": "synthetic-team",
+      "tenant_id": "synthetic-tenant"
+    },
+    "state": "succeeded",
+    "task_kind": "plan.decompose"
+  }
+}

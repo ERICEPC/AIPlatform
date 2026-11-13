@@ -1,0 +1,1570 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "RaccoonX OKR Runtime (test-stage, configure this new instance first)",
+    "version": "0.3.0-test",
+    "description": "Pinned PB 5d3e303e038b393b618ef0ecd628ee7c4421115d; pb.okr.v1 revision 2026-10-28.no-action. Test endpoint is restricted to the provisioned test application. Runtime principal must have server-provisioned exact PB tenant/team/actor scope. Native snapshot-pinned model execution verified; per-attempt usage completeness remains false."
+  },
+  "servers": [
+    {
+      "url": "https://YOUR_HOST"
+    }
+  ],
+  "paths": {
+    "/v1/okr/applications/{application_id}/runs": {
+      "post": {
+        "operationId": "submitRun",
+        "security": [
+          {
+            "RuntimeKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "application_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Trusted receipt separated from model output and transport metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "receipt",
+                    "model_output",
+                    "runtime"
+                  ],
+                  "properties": {
+                    "receipt": {
+                      "$ref": "./vendor/pb-5d3e303/runtime-receipt.schema.json"
+                    },
+                    "model_output": {
+                      "anyOf": [
+                        {
+                          "$ref": "./vendor/pb-5d3e303/model-output.schema.json"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "runtime": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "error_code",
+                        "cancel_requested",
+                        "created_at",
+                        "started_at",
+                        "finished_at",
+                        "expires_at",
+                        "contract_manifest_hash"
+                      ],
+                      "properties": {
+                        "error_code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cancel_requested": {
+                          "type": "boolean"
+                        },
+                        "created_at": {
+                          "type": "number"
+                        },
+                        "started_at": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "finished_at": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "expires_at": {
+                          "type": "number"
+                        },
+                        "contract_manifest_hash": {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{64}$"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON/duplicate keys/hash mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Key absent, revoked or expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Application/PB scope/current membership denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Run or snapshot not found in authorized scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Existing intent conflicts with request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Expired record/intent; never reused",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request exceeds 256KiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Contract/schema/reference/snapshot-manifest invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Queue full; Retry-After: 5",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Storage unavailable: outcome unknown; query original intent, do not blindly retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Identical intent returns original run; not automatic retry authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "receipt",
+                    "model_output",
+                    "runtime"
+                  ],
+                  "properties": {
+                    "receipt": {
+                      "$ref": "./vendor/pb-5d3e303/runtime-receipt.schema.json"
+                    },
+                    "model_output": {
+                      "anyOf": [
+                        {
+                          "$ref": "./vendor/pb-5d3e303/model-output.schema.json"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "runtime": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "error_code",
+                        "cancel_requested",
+                        "created_at",
+                        "started_at",
+                        "finished_at",
+                        "expires_at",
+                        "contract_manifest_hash"
+                      ],
+                      "properties": {
+                        "error_code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cancel_requested": {
+                          "type": "boolean"
+                        },
+                        "created_at": {
+                          "type": "number"
+                        },
+                        "started_at": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "finished_at": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "expires_at": {
+                          "type": "number"
+                        },
+                        "contract_manifest_hash": {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{64}$"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./vendor/pb-5d3e303/request.schema.json"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/okr/applications/{application_id}/runs/by-intent/{intent_id}": {
+      "get": {
+        "operationId": "findOriginalIntent",
+        "security": [
+          {
+            "RuntimeKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "application_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "intent_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trusted receipt separated from model output and transport metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "receipt",
+                    "model_output",
+                    "runtime"
+                  ],
+                  "properties": {
+                    "receipt": {
+                      "$ref": "./vendor/pb-5d3e303/runtime-receipt.schema.json"
+                    },
+                    "model_output": {
+                      "anyOf": [
+                        {
+                          "$ref": "./vendor/pb-5d3e303/model-output.schema.json"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "runtime": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "error_code",
+                        "cancel_requested",
+                        "created_at",
+                        "started_at",
+                        "finished_at",
+                        "expires_at",
+                        "contract_manifest_hash"
+                      ],
+                      "properties": {
+                        "error_code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cancel_requested": {
+                          "type": "boolean"
+                        },
+                        "created_at": {
+                          "type": "number"
+                        },
+                        "started_at": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "finished_at": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "expires_at": {
+                          "type": "number"
+                        },
+                        "contract_manifest_hash": {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{64}$"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON/duplicate keys/hash mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Key absent, revoked or expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Application/PB scope/current membership denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Run or snapshot not found in authorized scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Existing intent conflicts with request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Expired record/intent; never reused",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request exceeds 256KiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Contract/schema/reference/snapshot-manifest invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Queue full; Retry-After: 5",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Storage unavailable: outcome unknown; query original intent, do not blindly retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/okr/applications/{application_id}/runs/{run_id}": {
+      "get": {
+        "operationId": "getOriginalRun",
+        "security": [
+          {
+            "RuntimeKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "application_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trusted receipt separated from model output and transport metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "receipt",
+                    "model_output",
+                    "runtime"
+                  ],
+                  "properties": {
+                    "receipt": {
+                      "$ref": "./vendor/pb-5d3e303/runtime-receipt.schema.json"
+                    },
+                    "model_output": {
+                      "anyOf": [
+                        {
+                          "$ref": "./vendor/pb-5d3e303/model-output.schema.json"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "runtime": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "error_code",
+                        "cancel_requested",
+                        "created_at",
+                        "started_at",
+                        "finished_at",
+                        "expires_at",
+                        "contract_manifest_hash"
+                      ],
+                      "properties": {
+                        "error_code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cancel_requested": {
+                          "type": "boolean"
+                        },
+                        "created_at": {
+                          "type": "number"
+                        },
+                        "started_at": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "finished_at": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "expires_at": {
+                          "type": "number"
+                        },
+                        "contract_manifest_hash": {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{64}$"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON/duplicate keys/hash mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Key absent, revoked or expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Application/PB scope/current membership denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Run or snapshot not found in authorized scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Existing intent conflicts with request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Expired record/intent; never reused",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request exceeds 256KiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Contract/schema/reference/snapshot-manifest invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Queue full; Retry-After: 5",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Storage unavailable: outcome unknown; query original intent, do not blindly retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/okr/applications/{application_id}/runs/{run_id}/cancel": {
+      "post": {
+        "operationId": "cancelRun",
+        "security": [
+          {
+            "RuntimeKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "application_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Trusted receipt separated from model output and transport metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "receipt",
+                    "model_output",
+                    "runtime"
+                  ],
+                  "properties": {
+                    "receipt": {
+                      "$ref": "./vendor/pb-5d3e303/runtime-receipt.schema.json"
+                    },
+                    "model_output": {
+                      "anyOf": [
+                        {
+                          "$ref": "./vendor/pb-5d3e303/model-output.schema.json"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "runtime": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "error_code",
+                        "cancel_requested",
+                        "created_at",
+                        "started_at",
+                        "finished_at",
+                        "expires_at",
+                        "contract_manifest_hash"
+                      ],
+                      "properties": {
+                        "error_code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cancel_requested": {
+                          "type": "boolean"
+                        },
+                        "created_at": {
+                          "type": "number"
+                        },
+                        "started_at": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "finished_at": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "expires_at": {
+                          "type": "number"
+                        },
+                        "contract_manifest_hash": {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{64}$"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON/duplicate keys/hash mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Key absent, revoked or expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Application/PB scope/current membership denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Run or snapshot not found in authorized scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Existing intent conflicts with request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Expired record/intent; never reused",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request exceeds 256KiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Contract/schema/reference/snapshot-manifest invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Queue full; Retry-After: 5",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Storage unavailable: outcome unknown; query original intent, do not blindly retry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "RuntimeKey": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

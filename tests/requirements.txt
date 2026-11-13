@@ -1,0 +1,5 @@
+pytest
+SQLAlchemy>=2,<3
+Flask>=3,<4
+flask-orjson
+fakeredis[lua]

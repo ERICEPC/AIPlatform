@@ -1,0 +1,573 @@
+.root {
+  height: 100%;
+  overflow: auto;
+  padding: 32px;
+  color: var(--color-text-primary);
+  background: var(--color-background-body);
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.root h1 {
+  font-size: 28px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+.root h2:not(:where([data-team-access] *)) {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+.root h3:not(:where([data-team-access] *)) {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 12px 0 6px;
+}
+.root p:not(:where([data-team-access] *)) {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--color-text-tertiary);
+  margin: 8px 0 16px;
+}
+.back {
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  display: block;
+  margin-bottom: 8px;
+}
+.actions,
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.row {
+  justify-content: space-between;
+}
+.actions {
+  flex-wrap: wrap;
+}
+.root button:not(:where([data-team-monitor] *, [data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)) {
+  border: 1px solid var(--color-components-button-secondary-border);
+  background: var(--color-components-button-secondary-bg);
+  color: var(--color-components-button-secondary-text);
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.root button:not(:where([data-team-monitor] *, [data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)):hover {
+  background: var(--color-components-button-secondary-bg-hover);
+}
+.root button:not(:where([data-team-monitor] *, [data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)).primary {
+  background: var(--color-components-button-primary-bg);
+  color: var(--color-components-button-primary-text);
+  border-color: transparent;
+}
+.root
+  button:not(
+    :where([data-team-monitor] *, [data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)
+  ).primary:hover {
+  background: var(--color-components-button-primary-bg-hover);
+}
+.root button:not(:where([data-team-monitor] *, [data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)):disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.root
+  button:not(:where([data-team-monitor] *, [data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)):focus-visible,
+.root a:focus-visible {
+  outline: 2px solid var(--color-state-accent-solid);
+  outline-offset: 3px;
+}
+.root label:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)) {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 16px;
+}
+.root input:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)),
+.root textarea:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)),
+.root select:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)) {
+  width: 100%;
+  color: var(--color-text-primary);
+  background: var(--color-components-input-bg-normal);
+  border: 1px solid var(--color-divider-subtle);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 400;
+  outline: none;
+}
+.root input:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)):focus,
+.root textarea:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)):focus,
+.root select:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)):focus {
+  border-color: var(--color-components-input-border-active);
+}
+.root textarea:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)) {
+  resize: vertical;
+}
+.root label:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)).inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 16px 0;
+}
+.inline input {
+  width: 16px;
+  height: 16px;
+}
+.form,
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1120px;
+}
+.card {
+  border: 1px solid var(--color-components-panel-border);
+  border-radius: 14px;
+  padding: 24px;
+  background: var(--color-components-panel-bg);
+}
+.member {
+  padding: 20px;
+  margin-top: 16px;
+  border: 1px solid var(--color-divider-subtle);
+  border-radius: 10px;
+}
+.limits {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+.muted {
+  color: var(--color-text-tertiary);
+  font-size: 12px;
+  font-weight: 400;
+}
+.badge {
+  display: inline-flex;
+  border: 1px solid var(--color-divider-subtle);
+  border-radius: 6px;
+  padding: 3px 7px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+.tabs {
+  display: flex;
+  gap: 24px;
+  border-bottom: 1px solid var(--color-divider-subtle);
+  margin-bottom: 24px;
+}
+.root .tabs button {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 12px 0;
+  color: var(--color-text-tertiary);
+}
+.root .tabs button.active {
+  border-bottom: 2px solid var(--color-state-accent-solid);
+  color: var(--color-text-primary);
+}
+.error,
+.notice {
+  border: 1px solid var(--color-divider-subtle);
+  padding: 14px 16px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.error {
+  color: var(--color-text-destructive);
+}
+.notice {
+  background: var(--color-components-panel-bg);
+}
+.empty {
+  text-align: center;
+  max-width: 680px;
+  margin: 80px auto;
+}
+.empty p {
+  margin: 14px 0;
+}
+.emptyIcon {
+  font-size: 52px;
+  color: var(--color-text-tertiary);
+  margin-bottom: 20px;
+}
+.emptySmall {
+  text-align: center;
+  color: var(--color-text-tertiary);
+  font-size: 13px;
+  padding: 32px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.teamCard {
+  border: 1px solid var(--color-components-panel-border);
+  background: var(--color-components-panel-bg);
+  border-radius: 14px;
+  padding: 24px;
+  min-height: 220px;
+}
+.teamCard:hover {
+  background: var(--color-components-panel-on-panel-item-bg-hover);
+}
+.teamCard p {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 66px;
+}
+.teamIcon {
+  font-size: 26px;
+  color: var(--color-text-tertiary);
+  margin-bottom: 16px;
+}
+.teamCard .row {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+}
+.answer {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+  font-size: 14px;
+  padding: 20px 0;
+}
+.root pre:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)) {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: var(--color-components-input-bg-normal);
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.65;
+  max-height: 420px;
+  overflow: auto;
+}
+.root code:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)) {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+.step {
+  border: 1px solid var(--color-divider-subtle);
+  padding: 14px;
+  border-radius: 8px;
+}
+.root summary:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)) {
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.step summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+}
+.root details:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)) {
+  margin-top: 14px;
+}
+.key {
+  display: block;
+  margin: 10px 0;
+}
+.keyRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-divider-subtle);
+  font-size: 13px;
+}
+.frame {
+  display: block;
+  width: 100%;
+  border: 0;
+}
+.tableWrap {
+  overflow: auto;
+}
+.root table:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)) {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  font-size: 13px;
+}
+.root th:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)),
+.root td:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)) {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid var(--color-divider-subtle);
+}
+.root th:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)) {
+  color: var(--color-text-tertiary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.root td:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)):first-child {
+  max-width: 360px;
+  overflow-wrap: anywhere;
+}
+.root td:not(:where([data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)):not(:first-child) {
+  white-space: nowrap;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin: 24px 0;
+}
+.metrics strong {
+  font-size: 32px;
+}
+.metrics p {
+  margin-bottom: 4px;
+}
+@media (max-width: 900px) {
+  .root {
+    padding: 20px;
+  }
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .limits,
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .tabs {
+    gap: 16px;
+    overflow: auto;
+  }
+  .card {
+    padding: 18px;
+  }
+}
+@media (max-width: 600px) {
+  .limits {
+    grid-template-columns: 1fr;
+  }
+  .row {
+    flex-wrap: wrap;
+  }
+}
+.teamCard {
+  position: relative;
+  padding: 0;
+}
+.cardLink {
+  display: block;
+  height: 100%;
+  padding: 24px;
+}
+.teamCard h2 {
+  padding-right: 24px;
+  overflow-wrap: anywhere;
+}
+.root
+  button:not(
+    :where([data-team-monitor] *, [data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)
+  ).cardMenuTrigger {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 8px;
+  color: var(--color-text-tertiary);
+}
+.root
+  button:not(
+    :where([data-team-monitor] *, [data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)
+  ).cardMenuTrigger:hover,
+.root
+  button:not(
+    :where([data-team-monitor] *, [data-team-logs] *, [data-team-access] *, [data-team-list-toolbar] *)
+  ).cardMenuTrigger[data-popup-open] {
+  background: var(--color-state-base-hover);
+  color: var(--color-text-secondary);
+}
+
+.listShell {
+  height: 100%;
+  min-height: 0;
+}
+.detailShell {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+  gap: 4px;
+  padding: 4px;
+  background: var(--color-background-body);
+  color: var(--color-text-primary);
+}
+.detailShell > .root {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--color-divider-subtle);
+  border-radius: 12px;
+  background: var(--color-components-panel-bg);
+  padding: 24px;
+}
+.detailSidebar {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 248px;
+  min-width: 0;
+  overflow: auto;
+  border: 1px solid var(--color-divider-subtle);
+  border-radius: 12px;
+  background: var(--color-components-panel-bg);
+  padding: 20px 12px;
+}
+.detailBack {
+  display: block;
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  padding: 6px 8px;
+}
+.detailIdentity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 8px;
+  border-bottom: 1px solid var(--color-divider-subtle);
+  margin-bottom: 20px;
+}
+.detailAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--color-components-input-bg-normal);
+  font-size: 22px;
+}
+.detailIdentity > div {
+  min-width: 0;
+}
+.detailIdentity strong {
+  display: block;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+.detailIdentity > div > span {
+  display: block;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  margin-top: 4px;
+}
+.detailNav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.detailNav button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 12px;
+  background: transparent;
+  text-align: left;
+  font-size: 14px;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+}
+.detailNav button:hover {
+  background: var(--color-state-base-hover);
+}
+.detailNav button.active {
+  background: var(--color-state-base-hover);
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+.detailNav button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.detailNav button:focus-visible,
+.detailBack:focus-visible {
+  outline: 2px solid var(--color-state-accent-solid);
+  outline-offset: 2px;
+}
+.navIcon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+@media (max-width: 760px) {
+  .detailSidebar {
+    flex-basis: 180px;
+    padding: 12px 8px;
+  }
+  .detailShell > .root {
+    padding: 16px;
+  }
+}
+@media (max-width: 520px) {
+  .detailShell {
+    flex-direction: column;
+    overflow: auto;
+  }
+  .detailSidebar {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+  .detailIdentity {
+    padding: 10px 8px;
+    margin-bottom: 8px;
+  }
+  .detailNav {
+    flex-direction: row;
+    overflow: auto;
+  }
+  .detailNav button {
+    width: auto;
+    white-space: nowrap;
+    padding: 8px;
+  }
+  .detailShell > .root {
+    flex: 1 0 auto;
+    height: auto;
+    overflow: visible;
+  }
+}

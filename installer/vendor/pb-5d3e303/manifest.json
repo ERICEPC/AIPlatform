@@ -1,0 +1,19 @@
+{
+  "canonicalization": "PB-JSON-v1",
+  "contract_revision": "2026-10-28.no-action",
+  "files": {
+    "examples/lost-response.json": "49370de691e7f6cb2c46413293a410e070b45f26af601f9fa069d1ea2ae2ac5a",
+    "examples/missing-capacity.json": "98ed1c075067e7a034a8ddc4c18a68b6d3bab563af2afc3fdb674c0ce7dfc3ad",
+    "examples/permission-denied.json": "c89cb084293306bea7701fd18ba671ab6655055e62b16ca3b2bf95170f3d2b05",
+    "examples/plan-month.json": "db7b25792bdcd3ea1c0e99b0af4de17ca39c9f65800c69d4cff6ad34ad42559c",
+    "examples/plan-week.json": "2ba74a472428f67895cd3221f16a701f45391ea0f79b7afb8fbafaa3a11283f2",
+    "examples/progress-review.json": "45ce3f392b617bbd4bcc1716a901d784cb9b0450428ce202480d4891dba84139",
+    "examples/task-day.json": "79ebdd037111404163008b5c20bff2d0075d9d0e3981265a276b66e60a7649a5",
+    "examples/task-no-action.json": "bf0d966e081a544d572a6a9f18c3b08bd8f88c9ff8050221bd7e73913f03ae6d",
+    "model-output.schema.json": "77d8c3938565698e349ff37f7cbc00f67984ddff141212036069226db260c1b0",
+    "request.schema.json": "cd4eb47c422898a1858473433168ecb643334fce635d54211e041c8ac0bde7f2",
+    "runtime-receipt.schema.json": "432f50e31538c5c167ff40fdfce395e36f78eeb416685739aa4e0b17e21536fc"
+  },
+  "schema_version": "pb.okr.v1",
+  "scope": "synthetic_contract_only_no_remote_calls"
+}

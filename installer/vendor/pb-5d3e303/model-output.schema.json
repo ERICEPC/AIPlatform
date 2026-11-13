@@ -1,0 +1,594 @@
+{
+  "$defs": {
+    "Gap": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "enum": [
+            "explicit_gap",
+            "missing_evidence"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "source_refs": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "maxItems": 30,
+          "minItems": 1,
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "text": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "source_refs",
+        "basis"
+      ],
+      "title": "Gap",
+      "type": "object"
+    },
+    "MissingField": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "capacity",
+            "owner",
+            "verifier",
+            "project",
+            "acceptance",
+            "evidence",
+            "metric",
+            "constraints"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "detail": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Detail",
+          "type": "string"
+        },
+        "source_refs": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "maxItems": 30,
+          "title": "Source Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "code",
+        "detail",
+        "source_refs"
+      ],
+      "title": "MissingField",
+      "type": "object"
+    },
+    "MissingInputs": {
+      "additionalProperties": false,
+      "properties": {
+        "missing_inputs": {
+          "items": {
+            "$ref": "#/$defs/MissingField"
+          },
+          "maxItems": 30,
+          "minItems": 1,
+          "title": "Missing Inputs",
+          "type": "array"
+        },
+        "result_kind": {
+          "const": "missing_inputs",
+          "title": "Result Kind",
+          "type": "string"
+        },
+        "task_kind": {
+          "enum": [
+            "plan.decompose",
+            "task.suggest",
+            "progress.review"
+          ],
+          "title": "Task Kind",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "maxLength": 10000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "task_kind",
+        "result_kind",
+        "missing_inputs",
+        "warnings"
+      ],
+      "title": "MissingInputs",
+      "type": "object"
+    },
+    "NoAction": {
+      "additionalProperties": false,
+      "description": "A scoped model recommendation to add no task; never a completion verdict.",
+      "properties": {
+        "parent_ref": {
+          "$ref": "#/$defs/Ref"
+        },
+        "reason": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Reason",
+          "type": "string"
+        },
+        "result_kind": {
+          "const": "no_action",
+          "title": "Result Kind",
+          "type": "string"
+        },
+        "source_refs": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "maxItems": 30,
+          "minItems": 1,
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "task_kind": {
+          "const": "task.suggest",
+          "title": "Task Kind",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "maxLength": 10000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "task_kind",
+        "result_kind",
+        "parent_ref",
+        "reason",
+        "source_refs",
+        "warnings"
+      ],
+      "title": "NoAction",
+      "type": "object"
+    },
+    "Observation": {
+      "additionalProperties": false,
+      "properties": {
+        "source_refs": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "maxItems": 30,
+          "minItems": 1,
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "text": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "source_refs"
+      ],
+      "title": "Observation",
+      "type": "object"
+    },
+    "PlanCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9_.:-]{1,128}$",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "expected_result": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Expected Result",
+          "type": "string"
+        },
+        "owner_id": {
+          "pattern": "^[A-Za-z0-9_.:-]{1,128}$",
+          "title": "Owner Id",
+          "type": "string"
+        },
+        "parent_ref": {
+          "$ref": "#/$defs/Ref"
+        },
+        "reason": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Reason",
+          "type": "string"
+        },
+        "source_refs": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "maxItems": 30,
+          "minItems": 1,
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "title": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "parent_ref",
+        "owner_id",
+        "title",
+        "source_refs",
+        "reason",
+        "expected_result"
+      ],
+      "title": "PlanCandidate",
+      "type": "object"
+    },
+    "PlanDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate": {
+          "$ref": "#/$defs/PlanCandidate"
+        },
+        "result_kind": {
+          "const": "draft",
+          "title": "Result Kind",
+          "type": "string"
+        },
+        "task_kind": {
+          "const": "plan.decompose",
+          "title": "Task Kind",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "maxLength": 10000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "task_kind",
+        "result_kind",
+        "candidate",
+        "warnings"
+      ],
+      "title": "PlanDraft",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9_.:-]{1,128}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "cycle",
+            "kr",
+            "month",
+            "week",
+            "task",
+            "evidence"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "version": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "version",
+        "content_hash"
+      ],
+      "title": "Ref",
+      "type": "object"
+    },
+    "ReviewDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "adjustment_suggestions": {
+          "items": {
+            "$ref": "#/$defs/Observation"
+          },
+          "maxItems": 50,
+          "title": "Adjustment Suggestions",
+          "type": "array"
+        },
+        "gaps": {
+          "items": {
+            "$ref": "#/$defs/Gap"
+          },
+          "maxItems": 50,
+          "title": "Gaps",
+          "type": "array"
+        },
+        "observed_facts": {
+          "items": {
+            "$ref": "#/$defs/Observation"
+          },
+          "maxItems": 50,
+          "title": "Observed Facts",
+          "type": "array"
+        },
+        "result_kind": {
+          "const": "draft",
+          "title": "Result Kind",
+          "type": "string"
+        },
+        "risks": {
+          "items": {
+            "$ref": "#/$defs/Observation"
+          },
+          "maxItems": 50,
+          "title": "Risks",
+          "type": "array"
+        },
+        "task_kind": {
+          "const": "progress.review",
+          "title": "Task Kind",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "maxLength": 10000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "task_kind",
+        "result_kind",
+        "observed_facts",
+        "gaps",
+        "risks",
+        "adjustment_suggestions",
+        "warnings"
+      ],
+      "title": "ReviewDraft",
+      "type": "object"
+    },
+    "TaskCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptance_text": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Acceptance Text",
+          "type": "string"
+        },
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9_.:-]{1,128}$",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "due_date": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "goal": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Goal",
+          "type": "string"
+        },
+        "owner_id": {
+          "pattern": "^[A-Za-z0-9_.:-]{1,128}$",
+          "title": "Owner Id",
+          "type": "string"
+        },
+        "parent_ref": {
+          "$ref": "#/$defs/Ref"
+        },
+        "plan_minutes": {
+          "maximum": 1440,
+          "minimum": 15,
+          "multipleOf": 15,
+          "title": "Plan Minutes",
+          "type": "integer"
+        },
+        "project_id": {
+          "pattern": "^[A-Za-z0-9_.:-]{1,128}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Reason",
+          "type": "string"
+        },
+        "source_refs": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "maxItems": 30,
+          "minItems": 1,
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "title": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Title",
+          "type": "string"
+        },
+        "verifier_id": {
+          "pattern": "^[A-Za-z0-9_.:-]{1,128}$",
+          "title": "Verifier Id",
+          "type": "string"
+        },
+        "work_date": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "title": "Work Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "parent_ref",
+        "owner_id",
+        "title",
+        "source_refs",
+        "reason",
+        "project_id",
+        "verifier_id",
+        "goal",
+        "acceptance_text",
+        "work_date",
+        "due_date",
+        "plan_minutes"
+      ],
+      "title": "TaskCandidate",
+      "type": "object"
+    },
+    "TaskDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/TaskCandidate"
+          },
+          "maxItems": 50,
+          "minItems": 1,
+          "title": "Candidates",
+          "type": "array"
+        },
+        "result_kind": {
+          "const": "draft",
+          "title": "Result Kind",
+          "type": "string"
+        },
+        "task_kind": {
+          "const": "task.suggest",
+          "title": "Task Kind",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "maxLength": 10000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "task_kind",
+        "result_kind",
+        "candidates",
+        "warnings"
+      ],
+      "title": "TaskDraft",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PlanDraft"
+        },
+        {
+          "$ref": "#/$defs/TaskDraft"
+        },
+        {
+          "$ref": "#/$defs/ReviewDraft"
+        },
+        {
+          "$ref": "#/$defs/MissingInputs"
+        },
+        {
+          "$ref": "#/$defs/NoAction"
+        }
+      ],
+      "title": "Result"
+    },
+    "schema_version": {
+      "const": "pb.okr.v1",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "result"
+  ],
+  "title": "ModelOutput",
+  "type": "object"
+}

@@ -1,0 +1,18 @@
+OKR Runtime 0.3.0-test（测试阶段）
+
+代码与空表随安装器提供；API 前缀 /v1/okr/applications/{application_id}/runs。
+支持 pb.okr.v1 的 plan.decompose、task.suggest、progress.review。
+源码和固定合成合同位于 runtime/build/api/code/okr_runtime 与 vendor。
+接口映射见 OKR-openapi.json，Schema 引用目录 vendor/。
+
+没有预置 ProjectBuddy 空间、测试 Agent、发布快照、服务主体或 Key。
+不能用原部署的 ID 或 Key 访问新实例。部署者须在新实例创建应用和快照，
+由管理员显式绑定该快照、合同 manifest 与模型配置，指定确切空间/应用/PB scope、
+当前有效成员和运行凭据有效期，再通过私有服务端配置交付 Key。
+本包未提供自动化业务应用开通向导，不要直接复制原环境的测试 provisioning 脚本。
+
+此能力尚需安装者独立验收。逐次模型计量不完整，attempts_complete=false；
+不能用空数组推断没有模型调用或没有费用。默认单 worker，排队上限300秒、
+执行上限120秒、每空间最多20个等待/运行任务，结果保留30天。
+停止为异步通知，不承诺供应商立即停止计费；未通过业务 Schema 校验不返回有效结果。
+最终业务权限和版本仍须调用方在人工确认事务中重新校验。

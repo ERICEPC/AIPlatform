@@ -1,0 +1,36 @@
+{
+  "request": {
+    "schema_version": "pb.recommendation.v1",
+    "task_kind": "recommendation.generate",
+    "intent_id": "fixture-recommendation-001",
+    "scope": {
+      "tenant_id": "synthetic-tenant",
+      "team_id": "synthetic-team",
+      "actor_id": "synthetic-leader"
+    },
+    "application": {
+      "workspace_id": "fixture-workspace",
+      "application_id": "fixture-application",
+      "snapshot_id": "fixture-snapshot"
+    },
+    "input_snapshot_hash": "71e4e99827595c40061b5b1855b935921a9066430a2a739f1506f4b52f1252fa",
+    "source_json": "{\"asOfDate\":\"2026-10-29\",\"assignees\":[{\"actor_id\":\"member-a\",\"role\":\"fde\"}],\"evidence\":[{\"kind\":\"project_definition\",\"ref\":\"project\",\"value\":{\"goal_text\":\"形成经客户核对的需求记录\",\"id\":\"fixture-project\",\"status\":\"active\"}},{\"kind\":\"selected_quarter_kr\",\"ref\":\"okr:fixture-kr\",\"value\":{\"baseline_version\":null,\"cycle_id\":\"fixture-cycle\",\"cycle_status\":\"draft\",\"cycle_version\":2,\"kr_id\":\"fixture-kr\",\"kr_version\":1,\"label\":\"O1KR1\",\"title\":\"完成客户需求澄清并形成可核对材料\"}}],\"format\":\"recommendation-okr-evidence-v1\",\"limitations\":[\"未核实人员容量；工时仅建议，需负责人确认。没有月周计划。\"],\"okr_source\":{\"baseline_version\":null,\"cycle_id\":\"fixture-cycle\",\"cycle_status\":\"draft\",\"cycle_version\":2,\"kr_id\":\"fixture-kr\",\"kr_version\":1,\"label\":\"O1KR1\",\"title\":\"完成客户需求澄清并形成可核对材料\"},\"plan_date\":\"2026-10-29\",\"projectId\":\"fixture-project\",\"teamId\":\"synthetic-team\",\"tenantId\":\"synthetic-tenant\"}"
+  },
+  "model_output": {
+    "items": [
+      {
+        "title": "整理并核对客户需求问题清单",
+        "reason": "项目和季度KR要求形成需求材料，先列出待客户核实的问题。",
+        "deliverable": "一份问题清单，列明问题、依据及待核实项；由负责人确认后开展。",
+        "due_date": "2026-10-29",
+        "plan_hours": 0.5,
+        "assignee_id": "member-a",
+        "evidence_refs": [
+          "project",
+          "okr:fixture-kr"
+        ]
+      }
+    ],
+    "notes": "季度目标尚未冻结，月周计划为空；工时为建议，未验证人员容量，须负责人修改确认。"
+  }
+}
